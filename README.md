@@ -1,4 +1,6 @@
-![Banner Description](https://www.shutterstock.com/image-vector/online-education-courses-vector-illustration-600nw-1808272645.jpg)
+<p align="center">
+  <img src="https://img.freepik.com/premium-vector/coding-system-banner_87720-2994.jpg?w=2000" alt="Banner Description" width="100%">
+</p>
 
 # EduFlexHub - Ứng dụng học tập trực tuyến
 - <b>Người thực hiện: </b> Đặng Nguyễn Tiền Hậu
