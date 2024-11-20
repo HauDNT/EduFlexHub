@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.freepik.com/premium-vector/coding-system-banner_87720-2994.jpg?w=2000" alt="Banner Description" width="100%">
+  <img src="https://static.vecteezy.com/system/resources/previews/002/294/877/original/education-knowledge-concept-web-banner-design-student-study-on-stack-of-books-with-trophy-and-graduation-roll-online-education-digital-classroom-e-learning-concept-header-or-footer-banner-free-vector.jpg" alt="Banner Description" width="100%">
 </p>
 
 # EduFlexHub - Ứng dụng học tập trực tuyến
