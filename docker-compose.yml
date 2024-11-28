@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+    db-mysql:
+        image: mysql:8.0
+        container_name: eduflexhub-container
+        restart: no
+        environment:
+            - MYSQL_DATABASE=eduflexhub
+            - MYSQL_ROOT_PASSWORD=123456
+        ports:
+            - "3310:3306"
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: no
+        environment:
+            - PMA_HOST=db-mysql
+            - PMA_PORT=3306
+            - PMA_USER=root
+            - PMA_PASSWORD=123456
+        ports:
+            - "8000:80"
