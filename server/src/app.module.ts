@@ -1,13 +1,58 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
+import { AccountsModule } from '@/modules/accounts/accounts.module';
+import configuration from '@/config/configuration';
+import { typeOrmAsyncConfig } from '@/database/data-source';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminsModule } from './modules/admins/admins.module';
+import { SocialAccountsModule } from './modules/social_accounts/social_accounts.module';
+import { RolesModule } from './modules/roles/roles.module';
+import { ActionsModule } from './modules/actions/actions.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
+import { CoursesModule } from './modules/courses/courses.module';
+import { ModulesCourseModule } from './modules/modules_course/modules_course.module';
+import { LessionsCourseModule } from './modules/lessions_course/lessions_course.module';
+import { VideosModule } from './modules/videos/videos.module';
+import { ImagesCourseModule } from './modules/images_course/images_course.module';
+import { CompleteCoursesModule } from './modules/complete_courses/complete_courses.module';
+import { CompleteModulesModule } from './modules/complete_modules/complete_modules.module';
+import { CompleteLessionsModule } from './modules/complete_lessions/complete_lessions.module';
+import { CartsModule } from './modules/carts/carts.module';
+import { CartDetailsModule } from './modules/cart_details/cart_details.module';
+import { VouchersModule } from './modules/vouchers/vouchers.module';
 
 @Module({
     imports: [
-      ConfigModule.forRoot({ isGlobal: true })
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: [
+                '.env.development',
+                '.env.production',
+            ],
+            load: [configuration]
+        }),
+        TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
+        AccountsModule,
+        AdminsModule,
+        SocialAccountsModule,
+        RolesModule,
+        ActionsModule,
+        SessionsModule,
+        CoursesModule,
+        ModulesCourseModule,
+        LessionsCourseModule,
+        VideosModule,
+        ImagesCourseModule,
+        CompleteCoursesModule,
+        CompleteModulesModule,
+        CompleteLessionsModule,
+        CartsModule,
+        CartDetailsModule,
+        VouchersModule,
     ],
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
