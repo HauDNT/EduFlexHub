@@ -1,0 +1,41 @@
+/* styles/LoginForm.module.scss */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: url('../../assets/images/login_bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    .form {
+        background-color: rgb(255, 255, 255, 0.7);
+        box-shadow: 0px 8px 32px 0 rgba(199, 199, 226, 0.33);
+        backdrop-filter: blur(1px);
+        padding: 0px 16px 16px 16px;
+        border-radius: 16px;
+        min-width: 400px;
+
+        .formHeader {
+            text-align: center;
+        }
+
+        .formDivider {
+            border-color: #3a3a3a;
+        }
+
+        .socialLoginContainer {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            color: black;
+            font-size: 24px;
+
+            .socialLoginIcon {
+                cursor: pointer;
+            }
+        }
+    }
+
+}
