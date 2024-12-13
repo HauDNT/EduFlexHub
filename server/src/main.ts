@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { swaggerConfig } from './config/SwaggerConfig';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -16,6 +17,9 @@ async function bootstrap() {
             credentials: true
         }
     );
+
+    // Swagger
+    swaggerConfig(app);
 
     await app.listen(port ?? 8081);
 }
