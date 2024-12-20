@@ -4,7 +4,7 @@ import configuration from '@/config/configuration';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 
-import { AccountsModule } from '@/modules/accounts/accounts.module';
+import { UsersModule } from '@/modules/users/users.module';
 import { typeOrmAsyncConfig } from '@/database/data-source';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminsModule } from './modules/admins/admins.module';
@@ -24,6 +24,7 @@ import { CartsModule } from './modules/carts/carts.module';
 import { CartDetailsModule } from './modules/cart_details/cart_details.module';
 import { VouchersModule } from './modules/vouchers/vouchers.module';
 import { LoggerMiddleware } from './middleware/LoggerMiddleware';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
     imports: [
@@ -36,7 +37,7 @@ import { LoggerMiddleware } from './middleware/LoggerMiddleware';
             load: [configuration]
         }),
         TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
-        AccountsModule,
+        UsersModule,
         AdminsModule,
         SocialAccountsModule,
         RolesModule,
@@ -53,6 +54,7 @@ import { LoggerMiddleware } from './middleware/LoggerMiddleware';
         CartsModule,
         CartDetailsModule,
         VouchersModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],

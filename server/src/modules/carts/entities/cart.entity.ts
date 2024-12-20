@@ -1,4 +1,4 @@
-import { Account } from "@/modules/accounts/entities/account.entity";
+import { User } from "@/modules/users/entities/user.entity";
 import { CartDetail } from "@/modules/cart_details/entities/cart_detail.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -19,9 +19,9 @@ export class Cart {
     @Column({ type: 'datetime' })
     updated_at: Date | null;
 
-    @ManyToOne(() => Account, account => account.own_cart)
-    @JoinColumn({ name: 'account_id' })
-    account: Account;
+    @ManyToOne(() => User, user => user.own_cart)
+    @JoinColumn({ name: 'user_id' })
+    account: User;
 
     @OneToMany(() => CartDetail, details => details.cart)
     details: CartDetail[];

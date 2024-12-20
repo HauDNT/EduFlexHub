@@ -1,4 +1,4 @@
-import { Account } from "@/modules/accounts/entities/account.entity";
+import { User } from "@/modules/users/entities/user.entity";
 import { ModulesCourse } from "@/modules/modules_course/entities/modules_course.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 
@@ -17,7 +17,7 @@ export class CompleteModule {
     @JoinColumn({ name: 'module_id' })
     module: ModulesCourse;
 
-    @ManyToOne(() => Account, student => student.complete_modules)
+    @ManyToOne(() => User, student => student.complete_modules)
     @JoinColumn({ name: 'student_account_id' })
-    student: Account;
+    student: User;
 }

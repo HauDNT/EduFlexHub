@@ -1,5 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Account } from "@/modules/accounts/entities/account.entity";
+import { User } from "@/modules/users/entities/user.entity";
 import { Action } from "@/modules/actions/entities/action.entity";
 import { Admin } from "@/modules/admins/entities/admin.entity";
 
@@ -11,8 +11,8 @@ export class Role {
     @Column()
     name: string;
 
-    @OneToMany(() => Account, account => account.role_id)
-    accounts: Account[];
+    @OneToMany(() => User, user => user.role_id)
+    users: User[];
 
     @OneToMany(() => Admin, admin => admin.role_id)
     admins: Admin[];

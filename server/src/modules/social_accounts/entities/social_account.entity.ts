@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Account } from "@/modules/accounts/entities/account.entity";
+import { User } from "@/modules/users/entities/user.entity";
 
 @Entity({ name: 'social_accounts' })
 export class SocialAccount {
@@ -12,7 +12,7 @@ export class SocialAccount {
     @Column()
     provider_token: string;
 
-    @OneToOne(() => Account)
-    @JoinColumn({ name: 'account_id' })
-    account: Account;
+    @OneToOne(() => User)
+    @JoinColumn({ name: 'user_id' })
+    user: User;
 }

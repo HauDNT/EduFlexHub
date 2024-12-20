@@ -34,7 +34,7 @@ export class Admin {
     updated_at: Date | null;
 
     // role
-    @ManyToOne(() => Role, role => role.accounts)
+    @ManyToOne(() => Role, role => role.users)
     @JoinColumn({ name: 'role_id' })
     role_id: Role;
 }

@@ -1,4 +1,4 @@
-import { Account } from "@/modules/accounts/entities/account.entity";
+import { User } from "@/modules/users/entities/user.entity";
 import { CartDetail } from "@/modules/cart_details/entities/cart_detail.entity";
 import { CompleteCourse } from "@/modules/complete_courses/entities/complete_course.entity";
 import { ImagesCourse } from "@/modules/images_course/entities/images_course.entity";
@@ -33,9 +33,9 @@ export class Course {
     updated_at: Date | null;
 
     // teacher
-    @ManyToOne(() => Account, account => account.courses)
+    @ManyToOne(() => User, account => account.courses)
     @JoinColumn({ name: 'teacher_id' })
-    teacher: Account;
+    teacher: User;
 
     // course has many modules
     @OneToMany(() => ModulesCourse, modules_course => modules_course.course)
@@ -46,8 +46,8 @@ export class Course {
     images: ImagesCourse[];
 
     // Course was saved by student
-    @ManyToMany(() => Account, student => student.courses_saved)
-    student_save: Account[];
+    @ManyToMany(() => User, student => student.courses_saved)
+    student_save: User[];
 
     // Complete course
     @OneToMany(() => CompleteCourse, complete_course => complete_course.course)

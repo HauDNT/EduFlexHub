@@ -8,5 +8,7 @@ export default () => ({
     dbPassword: process.env.DB_PASSWORD,
     dbName: process.env.DB_NAME,
     secret_key: process.env.SECRET_KEY,
-
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: process.env.CALLBACK_URL,
 });

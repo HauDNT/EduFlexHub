@@ -1,4 +1,4 @@
-import { Account } from "@/modules/accounts/entities/account.entity";
+import { User } from "@/modules/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'sessions' })
@@ -15,7 +15,7 @@ export class Session {
     @Column({ type: 'timestamp', nullable: true })
     updated_at: Date | null;
 
-    @ManyToOne(() => Account, account => account.sessions)
+    @ManyToOne(() => User, user => user.sessions)
     @JoinColumn({ name: 'account_id' })
-    account: Account;
+    user: User;
 }

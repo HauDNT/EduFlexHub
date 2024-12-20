@@ -7,8 +7,8 @@ import { Role } from "@/modules/roles/entities/role.entity";
 import { Session } from "@/modules/sessions/entities/session.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'accounts' })
-export class Account {
+@Entity({ name: 'users' })
+export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -58,12 +58,12 @@ export class Account {
     updated_at: Date | null;
 
     // role
-    @ManyToOne(() => Role, role => role.accounts)
+    @ManyToOne(() => Role, role => role.users)
     @JoinColumn({ name: 'role_id' })
     role_id: Role;
 
     // sessions
-    @OneToMany(() => Session, session => session.account)
+    @OneToMany(() => Session, session => session.user)
     sessions: Session[];
 
     // teach <-> courses
