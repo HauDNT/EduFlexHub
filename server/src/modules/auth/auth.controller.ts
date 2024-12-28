@@ -27,7 +27,7 @@ export class AuthController {
         if (req.user) {
             const user = JSON.stringify(req.user);
 
-            if (await this.authService.savedSocialData(user)) {
+            if (await this.authService.accessWithGoogle(user)) {
                 return res.redirect(`http://localhost:3000/`);
             }
         } else {

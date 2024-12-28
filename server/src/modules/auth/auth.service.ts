@@ -50,50 +50,83 @@ export class AuthService {
         done(null, user)
     }
 
-    async savedSocialData(user: any): Promise<boolean> {
+    async accessWithGoogle(user: any): Promise<UserLoginResponseDTO> {
         const parseUser = JSON.parse(user);
-        const queryRunner = this.dataSource.createQueryRunner();
 
+        try {
+            // Check account with email exists?
+            const existsUser = await this.userRepository.findOneBy({
+                email: parseUser.email
+            });
+
+            existsUser !== null ? await this.updateLoginSocialAccount(existsUser.id, parseUser) : await this.savedNewSocialAccountData(parseUser);
+
+            const payload: UserLoginPayload = {
+                userId: parseUser.id,
+                email: parseUser.email,
+                provider_token: parseUser.accessToken,
+            }
+
+            return {
+                userId: parseUser.id,
+                username: parseUser.email,
+                accessToken: this.jwtService.sign(payload),
+            }
+        } catch (e) {
+            console.log('--> Error when login with social account: ', e);
+            throw new ExceptionHandler();
+        }
+    }
+
+    // --------------------------------------------------- Handle with data of social account response ---------------------------------------------------
+    async savedNewSocialAccountData(parseJSONData: any): Promise<Boolean> {
+        const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
-            // Check account with email exists?
-            const isExist = await this.userRepository.findOneBy({
-                email: parseUser.email
+            const saveUser: User = await queryRunner.manager.save(User, {
+                username: '',
+                password: '',
+                fullname: parseJSONData.fullname,
+                email: parseJSONData.email,
+                address: '',
+                phone_number: '',
+                address_device: '',
             });
 
-            if (!isExist) {
-                // Save user social account
-                const saveUser: User = await queryRunner.manager.save(User, {
-                    username: '',
-                    password: '',
-                    fullname: parseUser.fullname,
-                    email: parseUser.email,
-                    address: '',
-                    phone_number: '',
-                    address_device: '',
-                });
+            const saveSocialAccount: SocialAccount = await queryRunner.manager.save(SocialAccount, {
+                provider: parseJSONData.provider,
+                provider_token: parseJSONData.accessToken,
+                user_id: saveUser.id,
+            });
 
-                const saveSocialAccount: SocialAccount = await queryRunner.manager.save(SocialAccount, {
-                    provider: parseUser.provider,
-                    provider_token: parseUser.accessToken,
-                    user_id: saveUser.id,
-                });
-
-                if (saveUser && saveSocialAccount) {
-                    await queryRunner.commitTransaction();
-                    return true;
-                }
+            if (saveUser && saveSocialAccount) {
+                await queryRunner.commitTransaction();
+                return true;
             }
 
-            return true;
+            return false;
         } catch (e) {
-            console.log('--> Error when login with social account: ', e);
+            console.log('--> Error when saving new social account: ', e);
             await queryRunner.rollbackTransaction();
             throw new ExceptionHandler();
         } finally {
             await queryRunner.release()
+        }
+    }
+
+    async updateLoginSocialAccount(existsUserId: number, socialData: any): Promise<Boolean> {
+        try {
+            const updateResult = await this.socialAccountRepository.update(existsUserId, {
+                provider: socialData.provider,
+                provider_token: socialData.accessToken,
+            });
+
+            return updateResult ? true : false;
+        } catch (e) {
+            console.log('--> Error when saving new login session with social account: ', e);
+            throw new ExceptionHandler();
         }
     }
 }
