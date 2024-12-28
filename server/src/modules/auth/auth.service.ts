@@ -65,7 +65,6 @@ export class AuthService {
 
             if (!isExist) {
                 // Save user social account
-
                 const saveUser: User = await queryRunner.manager.save(User, {
                     username: '',
                     password: '',
