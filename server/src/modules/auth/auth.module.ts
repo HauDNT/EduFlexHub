@@ -9,10 +9,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from '../users/users.module';
 import { GoogleStrategy } from '@/authentication/google_oauth2/google-strategy';
 import { PassportModule } from '@nestjs/passport';
+import { SocialAccountsModule } from "../social_accounts/social_accounts.module";
+import { SocialAccount } from "@/modules/social_accounts/entities/social_account.entity";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([User, SocialAccount]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
@@ -24,6 +26,7 @@ import { PassportModule } from '@nestjs/passport';
             inject: [ConfigService],
         }),
         UsersModule,
+        SocialAccountsModule,
         PassportModule.register({ 
             defaultStrategy: 'google',
             session: true,

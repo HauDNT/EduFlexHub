@@ -42,7 +42,7 @@ export class User {
     @Column({ default: false })
     is_active: boolean;
 
-    @Column()
+    @Column({ default: '' })
     code_expired: string;
 
     @Column({ default: false })

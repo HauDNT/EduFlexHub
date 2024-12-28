@@ -14,5 +14,5 @@ export class SocialAccount {
 
     @OneToOne(() => User)
     @JoinColumn({ name: 'user_id' })
-    user: User;
+    user_id: number;
 }

@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import {User} from "@/modules/users/entities/user.entity";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -17,17 +18,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
     async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
-        console.log('Google Profile:', profile); // Kiểm tra profile từ Google
-        const { name, emails, photos } = profile;
+        const { id, displayName, emails, photos, provider } = profile;
 
-        const user = {
+        const oAuthData = {
+            id: id,
             email: emails[0]?.value,
-            firstName: name?.givenName,
-            lastName: name?.familyName,
+            fullname: displayName,
             picture: photos[0]?.value,
+            provider: provider,
             accessToken,
         };
 
-        done(null, user); // Trả dữ liệu user về Passport
+        done(null, oAuthData); // Trả dữ liệu user về Passport
     }
 }
