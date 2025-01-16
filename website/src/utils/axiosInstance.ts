@@ -1,7 +1,7 @@
 'use client'
-import axios, {AxiosInstance, CreateAxiosDefaults} from 'axios';
+import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios';
 
-const axiosInstance:AxiosInstance = axios.create({
+const axiosInstance: AxiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_URL_SERVER,
     timeout: 10000,
     headers: {

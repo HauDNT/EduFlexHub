@@ -1,22 +1,22 @@
 'use server'
-import {cookies} from "next/headers";
+import { cookies } from "next/headers";
 
-export const setCookie: Promise<void> = async (name: string, value: any, options = {}) => {
-    const cookieStore = await cookies();
+export const setCookie = async (name: string, value: any, options = {}) => {
+    const cookieStore = await cookies();  // Thêm await ở đây
 
     cookieStore.set({
         name: name,
         value: value,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        sameSite: 'strict',
         ...options,
-    })
+    });
 }
 
-export const getCookie: Promise<any> = async (name: string) => {
-    const cookieStore = await cookies();
+export const getCookie = async (name: string) => {
+    const cookieStore = await cookies();  // Thêm await ở đây
     return cookieStore.get(name);
 }
 
-const checkExistCookie: Promise<boolean> = async (name: string) => { }
+const checkExistCookie = async (name: string) => { }

@@ -1,6 +1,6 @@
 'use client'
-import React, {useState} from 'react';
-import {useRouter, redirect} from "next/navigation";
+import React, { useState } from 'react';
+import { useRouter, redirect } from "next/navigation";
 import { Button, Divider, Form, Input, Typography } from 'antd';
 import { FacebookFilled, GithubFilled, GoogleOutlined } from '@ant-design/icons';
 import axiosInstance from "@/utils/axiosInstance";
@@ -14,18 +14,21 @@ const Login: React.FC = () => {
     const router = useRouter();
 
     const handleLogin = async () => {
-          const res = await axiosInstance
-              .post<LoginResponseInterface>('/auth/login', {
-                  "username": username,
-                  "password": password,
-              })
-              .catch(error => alert(`Error + ${error}`));
+        const res = await axiosInstance
+            .post<LoginResponseInterface>(
+                '/auth/login', 
+                {
+                    "username": username,
+                    "password": password,
+                }
+            )
+            .catch(error => alert(`Error + ${error}`));
 
-          if (res.status === 201 && res.data.accessToken) {
-              await setCookie('username', res.data.username);
-              await setCookie('userId', res.data.userId);
-              await setCookie('accessToken', res.data.accessToken);
-          }
+        if (res.status === 201 && res.data.accessToken) {
+            await setCookie('username', res.data.username);
+            await setCookie('userId', res.data.userId);
+            await setCookie('accessToken', res.data.accessToken);
+        }
     };
 
     return (
@@ -36,7 +39,7 @@ const Login: React.FC = () => {
                     <Input
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder='Enter your username'/>
+                        placeholder='Enter your username' />
                 </Form.Item>
                 <Form.Item label='Password' name={'password'}>
                     <Input
