@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local"
+import { Toaster } from "@/components/ui/toaster"
 import ReduxProvider from "@/redux/ReduxProvider";
 import "./globals.css";
 
 const webFont = localFont({
-    src: '../assets/fonts/Roboto/static/Roboto_SemiCondensed-Regular.ttf',
+    src: '../assets/fonts/OpenSans/OpenSans-Regular.ttf',
     display: 'swap'
 })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
                 <ReduxProvider>
                     {children}
                 </ReduxProvider>
+                <Toaster/>
             </body>
         </html>
     );

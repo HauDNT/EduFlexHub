@@ -28,5 +28,5 @@ export function middleware(request: NextRequest) {
 
 // Config matcher
 export const config = {
-    matcher: [...privatePaths, ...authPaths],
+    matcher: ['/', '/home', '/login', '/register'],
 };

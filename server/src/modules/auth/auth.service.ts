@@ -1,13 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { UserLoginDTO } from './dto/login-account.dto';
-import { UserLoginResponseDTO } from './dto/login-response.dto';
-import { UserLoginPayload } from '@/authentication/jwt/jwt-payload.type';
-import { SocialAccount } from "@/modules/social_accounts/entities/social_account.entity";
-import { ExceptionHandler } from "@nestjs/core/errors/exception-handler";
+import {
+    BadRequestException,
+    HttpException,
+    Injectable,
+    InternalServerErrorException,
+    UnauthorizedException
+} from '@nestjs/common';
+import {User} from '../users/entities/user.entity';
+import {InjectRepository} from '@nestjs/typeorm';
+import {DataSource, Repository} from 'typeorm';
+import {JwtService} from '@nestjs/jwt';
+import {UserLoginDTO} from './dto/login-account.dto';
+import {UserLoginResponseDTO} from './dto/login-response.dto';
+import {UserLoginPayload} from '@/authentication/jwt/jwt-payload.type';
+import {SocialAccount} from "@/modules/social_accounts/entities/social_account.entity";
+import {ExceptionHandler} from "@nestjs/core/errors/exception-handler";
+import {RegisterDTO} from "@/modules/auth/dto/register.dto";
+import {comparePassword, hashPassword} from "@/utils/bcrypt";
+import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
 
 @Injectable()
 export class AuthService {
@@ -20,25 +29,101 @@ export class AuthService {
         private dataSource: DataSource,
     ) { };
 
-    // --------------------------------------------------- Login - local account ---------------------------------------------------
+    // --------------------------------------------------- Local account ---------------------------------------------------
     async userLogin(account: UserLoginDTO): Promise<UserLoginResponseDTO> {
-        const user = await this.userRepository.findOneBy({
-            username: account.username,
-            password: account.password,
-        });
+        if (!account || !account.username || !account.password) {
+            throw new BadRequestException('Thông tin đăng nhập không hợp lệ')
+        }
 
-        if (!user) {
-            throw new UnauthorizedException();
-        } else {
+        try {
+            const user = await this.userRepository.findOneBy({
+                username: account.username,
+            });
+
+            if (!user) {
+                throw new UnauthorizedException('Tài khoản không tồn tại')
+            }
+
+            const isPasswordValid: boolean = await comparePassword(account.password, user.password);
+
+            if (!isPasswordValid) {
+                throw new UnauthorizedException('Mật khẩu không trùng khớp')
+            }
+
             const payload: UserLoginPayload = { userId: user.id, username: user.username };
 
             return {
                 userId: user.id,
                 username: user.username,
                 accessToken: this.jwtService.sign(payload),
+            };
+        } catch (e) {
+            console.log(`Lỗi đăng nhập: ${e.message}`)
+
+            if (e instanceof HttpException) {
+                throw e;
             }
+
+            throw new InternalServerErrorException('Xảy ra lỗi từ phía server trong quá trình đăng nhập');
         }
     };
+
+    async userRegister(data: RegisterDTO): Promise<RegisterResponseDTO> {
+        const queryRunner = this.dataSource.createQueryRunner();
+
+        try {
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+
+            if (!data || !data.username || !data.password || !data.re_password) {
+                throw new BadRequestException('Thông tin đăng ký không hợp lệ')
+            }
+
+            const { username, password, re_password } = data;
+            const existUser = await this.userRepository.findOneBy({username});
+
+            if (existUser) {
+                throw new BadRequestException('Tên tài khoản đã tồn tại')
+            }
+
+            if (password !== re_password) {
+                throw new BadRequestException('Mật khẩu không trùng khớp')
+            }
+
+            const hash_password = await hashPassword(password)
+
+            await queryRunner.manager.save(User, {
+                username: username,
+                password: hash_password,
+                fullname: '',
+                email: '',
+                address: '',
+                phone_number: '',
+                address_device: '',
+            });
+
+            await queryRunner.commitTransaction();
+
+            return {
+                status: 201,
+                message: 'Đăng ký thành công',
+            }
+        }
+        catch (e) {
+            await queryRunner.rollbackTransaction();
+
+            console.log(`Lỗi đăng ký: ${e.message}`)
+
+            if (e instanceof HttpException) {
+                throw e;
+            }
+
+            throw new InternalServerErrorException('Đã xảy ra lỗi ở phía server trong quá trình đăng ký tài khoản');
+        }
+        finally {
+            await queryRunner.release();
+        }
+    }
 
     // --------------------------------------------------- Login - Google OAuth ---------------------------------------------------
     serializeUser(user: any, done: Function) {
@@ -73,42 +158,44 @@ export class AuthService {
                 accessToken: this.jwtService.sign(payload),
             }
         } catch (e) {
-            console.log('--> Error when login with social account: ', e);
+            console.log('--> Xảy ra lỗi trong quá trình đăng nhập với tài khoản Google: ', e);
             throw new ExceptionHandler();
         }
     }
 
     // --------------------------------------------------- Handle with data of social account response ---------------------------------------------------
-    async savedNewSocialAccountData(parseJSONData: any): Promise<Boolean> {
+    async savedNewSocialAccountData(parseJSONData: any): Promise<boolean> {
         const queryRunner = this.dataSource.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
 
         try {
-            const saveUser: User = await queryRunner.manager.save(User, {
-                username: '',
-                password: '',
-                fullname: parseJSONData.fullname,
-                email: parseJSONData.email,
-                address: '',
-                phone_number: '',
-                address_device: '',
-            });
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
 
-            const saveSocialAccount: SocialAccount = await queryRunner.manager.save(SocialAccount, {
-                provider: parseJSONData.provider,
-                provider_token: parseJSONData.accessToken,
-                user_id: saveUser.id,
-            });
+            if (parseJSONData) {
+                const saveUser: User = await queryRunner.manager.save(User, {
+                    username: '',
+                    password: '',
+                    fullname: parseJSONData.fullname,
+                    email: parseJSONData.email,
+                    address: '',
+                    phone_number: '',
+                    address_device: '',
+                });
 
-            if (saveUser && saveSocialAccount) {
-                await queryRunner.commitTransaction();
-                return true;
+                const saveSocialAccount: SocialAccount = await queryRunner.manager.save(SocialAccount, {
+                    provider: parseJSONData.provider,
+                    provider_token: parseJSONData.accessToken,
+                    user_id: saveUser.id,
+                });
+
+                if (saveUser && saveSocialAccount) {
+                    await queryRunner.commitTransaction();
+                    return true;
+                }
             }
 
             return false;
         } catch (e) {
-            console.log('--> Error when saving new social account: ', e);
             await queryRunner.rollbackTransaction();
             throw new ExceptionHandler();
         } finally {
@@ -116,16 +203,16 @@ export class AuthService {
         }
     }
 
-    async updateLoginSocialAccount(existsUserId: number, socialData: any): Promise<Boolean> {
+    async updateLoginSocialAccount(existsUserId: number, socialData: any): Promise<boolean> {
         try {
             const updateResult = await this.socialAccountRepository.update(existsUserId, {
                 provider: socialData.provider,
                 provider_token: socialData.accessToken,
             });
 
-            return updateResult ? true : false;
+            return !!updateResult;
         } catch (e) {
-            console.log('--> Error when saving new login session with social account: ', e);
+            console.log('--> Xảy ra lỗi trong quá trình lưu phiên đăng nhập mới từ tài khoản Google: ', e);
             throw new ExceptionHandler();
         }
     }

@@ -3,17 +3,26 @@ import { AuthService } from './auth.service';
 import { UserLoginDTO } from './dto/login-account.dto';
 import { UserLoginResponseDTO } from './dto/login-response.dto';
 import { GoogleGuard } from '@/authentication/google_oauth2/google-guard';
+import {RegisterDTO} from "@/modules/auth/dto/register.dto";
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
-    // Local
+    // Local local
     @Post('login')
     async login(
         @Body() account: UserLoginDTO
     ): Promise<UserLoginResponseDTO> {
         return this.authService.userLogin(account);
+    }
+
+    // Register local
+    @Post('register')
+    async register(
+        @Body() data: RegisterDTO
+    ): Promise<any> {
+        return this.authService.userRegister(data);
     }
 
     // Google

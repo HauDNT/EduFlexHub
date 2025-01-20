@@ -25,6 +25,8 @@ import { CartDetailsModule } from './modules/cart_details/cart_details.module';
 import { VouchersModule } from './modules/vouchers/vouchers.module';
 import { LoggerMiddleware } from './middleware/LoggerMiddleware';
 import { AuthModule } from './modules/auth/auth.module';
+import {APP_FILTER} from "@nestjs/core";
+import {HttpExceptionFilter} from "@/utils/httpExceptionFilter";
 
 @Module({
     imports: [
@@ -57,7 +59,13 @@ import { AuthModule } from './modules/auth/auth.module';
         AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
+        }
+    ],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {

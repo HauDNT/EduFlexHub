@@ -12,20 +12,22 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
+import { FaGithub, FaGoogle, FaFacebook } from 'react-icons/fa'
 import { setReduxAuthToken } from '@/redux/authSlice'
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import axiosInstance from "@/utils/axiosInstance"
+import axiosInstance, {handleAxiosError} from "@/utils/axiosInstance"
 import { LoginBody, LoginBodyType } from '@/schemas/auth.schema'
 import { LoginResponseInterface } from '@/interfaces/interfaces'
 import { setCookie } from '@/utils/cookieManage'
+import Link from "next/link";
+import {useRouter} from "next/navigation";
 
 const LoginForm: React.FC = () => {
-    const router = useRouter()
     const { toast } = useToast()
     const dispatch = useDispatch()
+    const router = useRouter()
 
     const form = useForm<LoginBodyType>({
         resolver: zodResolver(LoginBody),
@@ -37,6 +39,19 @@ const LoginForm: React.FC = () => {
 
     const handleLogin = async (values: LoginBodyType) => {
         try {
+            if (!values) {
+                toast({
+                    title: "Vui lòng điền đẩy đủ thông tin",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+
+
+
+
+
             const result = await axiosInstance
                 .post<LoginResponseInterface>(
                     '/auth/login',
@@ -63,11 +78,13 @@ const LoginForm: React.FC = () => {
                 router.push('/home')
             }
         } catch (error) {
+            const errorMessage = handleAxiosError(error);
+
             toast({
                 title: "Đăng nhập thất bại",
+                description: errorMessage,
                 variant: "destructive",
-                description: `Mã lỗi: ${error}`
-            })
+            });
         }
     }
 
@@ -75,8 +92,9 @@ const LoginForm: React.FC = () => {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(handleLogin)}
-                className="space-y-2 max-w-[600px] flex-1"
+                className="space-y-2 max-w-[600px] flex-1 bg-white p-6 rounded shadow-lg border-gray-950"
             >
+                <h1 className="text-3xl font-bold text-blue-600 mb-4 text-center">Đăng nhập vào EduFlexHub</h1>
                 <FormField
                     control={form.control}
                     name="username"
@@ -104,6 +122,32 @@ const LoginForm: React.FC = () => {
                     )}
                 />
                 <Button type="submit" className='!mt-6 w-full'>Đăng nhập</Button>
+
+                <div className='flex justify-between !my-4'>
+                    <div>
+                        Bạn chưa có tài khoản?&nbsp;
+                        <Link href='/register' className='text-blue-500'>
+                            Đăng ký ngay
+                        </Link>
+                    </div>
+                    <Link href='/fotget-password' className='text-blue-500'>
+                        Quên mật khẩu
+                    </Link>
+                </div>
+
+                <hr className="border-t border-gray-300 !mt-6" />
+                <h3 className='font-thin text-center'>Hoặc đăng nhập với</h3>
+                <div className='flex items-center justify-center space-x-8 !mt-4'>
+                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                        <FaGithub size={30}/>
+                    </Link>
+                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                        <FaGoogle size={30}/>
+                    </Link>
+                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                        <FaFacebook size={30}/>
+                    </Link>
+                </div>
             </form>
         </Form>
     )
