@@ -1,28 +1,32 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
+const privatePaths = ['/home'];
 const authPaths = ['/login', '/register'];
-const insidePaths = ['/home'];
-
-export const config = {
-    matcher: [...authPaths, ...insidePaths],
-};
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const cookieToken = request.cookies.get('accessToken')?.value;
+    const accessToken = request.cookies.get('accessToken')?.value;
 
-    if (insidePaths.some(path => pathname.startsWith(path))) {
-        if (!cookieToken) {
-            return NextResponse.redirect(new URL('/login', request.url))
+    // Nếu truy cập vào các trang cần session mà không có token => chuyển hướng đến login
+    if (privatePaths.some(path => pathname.startsWith(path))) {
+        if (!accessToken) {
+            return NextResponse.redirect(new URL('/login', request.url));
         }
     }
-    
+
+    // Nếu đã có token mà truy cập vào trang login/register => chuyển hướng đến /me
     if (authPaths.some(path => pathname.startsWith(path))) {
-        if (cookieToken) {
-            return NextResponse.redirect(new URL('/', request.url))
+        if (accessToken) {
+            return NextResponse.redirect(new URL('/home', request.url));
         }
     }
 
+    // Nếu không thuộc bất kỳ trường hợp nào trên, cho phép tiếp tục
     return NextResponse.next();
 }
+
+// Config matcher
+export const config = {
+    matcher: [...privatePaths, ...authPaths],
+};

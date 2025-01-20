@@ -1,5 +1,5 @@
 export default function Home() {
     return (
-        <>Next.js start success</>
-    )
+        <div>Landing page</div>
+    );
 }
