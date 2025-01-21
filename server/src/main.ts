@@ -7,12 +7,16 @@ import { UsersService } from '@/modules/users/users.service';
 import { PassportOAuthConfig } from '@/authentication/google_oauth2/google-passport.config';
 import session from 'express-session';
 import passport from 'passport';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
     const usersService = app.get(UsersService);
     const port = configService.get('PORT');
+
+    // Apply cookie parser to access cookies from request
+    app.use(cookieParser());
 
     // Config CORS
     app.enableCors(

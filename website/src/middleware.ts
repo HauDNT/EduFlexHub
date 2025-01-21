@@ -6,7 +6,7 @@ const authPaths = ['/login', '/register'];
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const accessToken = request.cookies.get('accessToken')?.value;
+    const accessToken = request.cookies.get('eduflexhub-authentication')?.value.valueOf('accessToken');
 
     // Nếu truy cập vào các trang cần session mà không có token => chuyển hướng đến login
     if (privatePaths.some(path => pathname.startsWith(path))) {

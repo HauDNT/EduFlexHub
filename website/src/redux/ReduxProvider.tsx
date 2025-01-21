@@ -11,19 +11,17 @@ const ReduxInitial = () => {
     useEffect(() => {
         Promise
         .all([
-            getCookie('userId'),
-            getCookie('username'),
-            getCookie('accessToken'),
+            getCookie('eduflexhub-authentication'),
         ])
         .then((values) => {
-            const cookieData = {
-                userId: values[0]?.value,
-                username: values[1]?.value,
-                accessToken: values[2]?.value,
+            let valueParse;
+
+            if (values.length > 0 && values[0]?.value) {
+                valueParse = JSON.parse(values[0]?.value);
             }
 
-            if (cookieData) {
-                dispatch(setReduxAuthToken(cookieData))
+            if (valueParse) {
+                dispatch(setReduxAuthToken(valueParse))
             }
         })
     }, [dispatch])

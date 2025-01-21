@@ -47,11 +47,6 @@ const LoginForm: React.FC = () => {
                 return;
             }
 
-
-
-
-
-
             const result = await axiosInstance
                 .post<LoginResponseInterface>(
                     '/auth/login',
@@ -65,14 +60,16 @@ const LoginForm: React.FC = () => {
                 ))
 
             if (result.payload.accessToken) {
-                await setCookie('userId', result.payload.userId)
-                await setCookie('username', result.payload.username)
-                await setCookie('accessToken', result.payload.accessToken)
+                await setCookie('eduflexhub-authentication',{
+                    userId: result.payload.userId,
+                    username: result.payload.username,
+                    accessToken: result.payload.accessToken,
+                })
 
                 dispatch(setReduxAuthToken({
                     userId: result.payload.userId,
                     username: result.payload.username,
-                    accessToken: result.payload.accessToken
+                    accessToken: result.payload.accessToken,
                 }))
 
                 router.push('/home')
@@ -89,67 +86,67 @@ const LoginForm: React.FC = () => {
     }
 
     return (
-        <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(handleLogin)}
-                className="space-y-2 max-w-[600px] flex-1 bg-white p-6 rounded shadow-lg border-gray-950"
-            >
-                <h1 className="text-3xl font-bold text-blue-600 mb-4 text-center">Đăng nhập vào EduFlexHub</h1>
-                <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Tài khoản</FormLabel>
-                            <FormControl>
-                                <Input placeholder="nva@email.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Mật khẩu</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <Button type="submit" className='!mt-6 w-full'>Đăng nhập</Button>
+        <div className="space-y-2 max-w-[600px] flex-1 bg-white p-6 rounded shadow-lg border-gray-950">
+            <Form {...form}>
+                <form
+                    onSubmit={form.handleSubmit(handleLogin)}
+                >
+                    <h1 className="text-3xl font-bold text-blue-600 mb-4 text-center">Đăng nhập vào EduFlexHub</h1>
+                    <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Tài khoản</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="nva@email.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Mật khẩu</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit" className='!mt-6 w-full'>Đăng nhập</Button>
 
-                <div className='flex justify-between !my-4'>
-                    <div>
-                        Bạn chưa có tài khoản?&nbsp;
-                        <Link href='/register' className='text-blue-500'>
-                            Đăng ký ngay
+                    <div className='flex justify-between !my-4'>
+                        <div>
+                            Bạn chưa có tài khoản?&nbsp;
+                            <Link href='/register' className='text-blue-500'>
+                                Đăng ký ngay
+                            </Link>
+                        </div>
+                        <Link href='/fotget-password' className='text-blue-500'>
+                            Quên mật khẩu
                         </Link>
                     </div>
-                    <Link href='/fotget-password' className='text-blue-500'>
-                        Quên mật khẩu
-                    </Link>
-                </div>
-
-                <hr className="border-t border-gray-300 !mt-6" />
-                <h3 className='font-thin text-center'>Hoặc đăng nhập với</h3>
-                <div className='flex items-center justify-center space-x-8 !mt-4'>
-                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
-                        <FaGithub size={30}/>
-                    </Link>
-                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
-                        <FaGoogle size={30}/>
-                    </Link>
-                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
-                        <FaFacebook size={30}/>
-                    </Link>
-                </div>
-            </form>
-        </Form>
+                </form>
+            </Form>
+            <hr className="border-t border-gray-300 !mt-6" />
+            <h3 className='font-thin text-center'>Hoặc đăng nhập với</h3>
+            <div className='flex items-center justify-center space-x-8 !mt-4'>
+                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                    <FaGithub size={30}/>
+                </Link>
+                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                    <FaGoogle size={30}/>
+                </Link>
+                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                    <FaFacebook size={30}/>
+                </Link>
+            </div>
+        </div>
     )
 }
 

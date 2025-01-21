@@ -35,9 +35,24 @@ export class AuthController {
     async googleRedirect(@Req() req, @Res() res) {
         if (req.user) {
             const user = JSON.stringify(req.user);
+            const result = await this.authService.accessWithGoogle(user);
 
-            if (await this.authService.accessWithGoogle(user)) {
-                return res.redirect(`http://localhost:3000/`);
+            if (result) {
+                res.cookie(
+                    'eduflexhub-authentication',
+                    JSON.stringify({
+                        userId: result.userId,
+                        username: result.username,
+                        accessToken: result.accessToken,
+                    }),
+                    {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        maxAge: 3600000,
+                    }
+                );
+
+                return res.redirect('http://localhost:3000/home');
             }
         } else {
             return res.redirect(`http://localhost:3000/?user=error`);

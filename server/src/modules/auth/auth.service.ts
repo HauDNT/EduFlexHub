@@ -144,7 +144,9 @@ export class AuthService {
                 email: parseUser.email
             });
 
-            existsUser !== null ? await this.updateLoginSocialAccount(existsUser.id, parseUser) : await this.savedNewSocialAccountData(parseUser);
+            existsUser !== null ?
+                await this.updateLoginSocialAccount(existsUser.id, parseUser) :
+                await this.savedNewSocialAccountData(parseUser);
 
             const payload: UserLoginPayload = {
                 userId: parseUser.id,
