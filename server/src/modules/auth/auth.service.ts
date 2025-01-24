@@ -27,7 +27,8 @@ export class AuthService {
         private socialAccountRepository: Repository<SocialAccount>,
         private jwtService: JwtService,
         private dataSource: DataSource,
-    ) { };
+    ) {
+    };
 
     // --------------------------------------------------- Local account ---------------------------------------------------
     async userLogin(account: UserLoginDTO): Promise<UserLoginResponseDTO> {
@@ -50,7 +51,10 @@ export class AuthService {
                 throw new UnauthorizedException('Mật khẩu không trùng khớp')
             }
 
-            const payload: UserLoginPayload = { userId: user.id, username: user.username };
+            const payload: UserLoginPayload = {
+                userId: user.id,
+                username: user.username
+            };
 
             return {
                 userId: user.id,
@@ -79,7 +83,7 @@ export class AuthService {
                 throw new BadRequestException('Thông tin đăng ký không hợp lệ')
             }
 
-            const { username, password, re_password } = data;
+            const {username, password, re_password} = data;
             const existUser = await this.userRepository.findOneBy({username});
 
             if (existUser) {
@@ -108,8 +112,7 @@ export class AuthService {
                 status: 201,
                 message: 'Đăng ký thành công',
             }
-        }
-        catch (e) {
+        } catch (e) {
             await queryRunner.rollbackTransaction();
 
             console.log(`Lỗi đăng ký: ${e.message}`)
@@ -119,10 +122,22 @@ export class AuthService {
             }
 
             throw new InternalServerErrorException('Đã xảy ra lỗi ở phía server trong quá trình đăng ký tài khoản');
-        }
-        finally {
+        } finally {
             await queryRunner.release();
         }
+    }
+
+    async updateOTPVerifyAccount(user: User, verifyCode: string): Promise<any> {
+        const otpCreatedAt = new Date();
+        const updateOTPAccount = await this.userRepository.save({
+                ...user,
+                code_expires: verifyCode,
+                expires_at: new Date(otpCreatedAt.getTime() + 5 * 60000),
+                updated_at: new Date(),
+            }
+        );
+
+        return !!updateOTPAccount;
     }
 
     // --------------------------------------------------- Login - Google OAuth ---------------------------------------------------
@@ -131,7 +146,7 @@ export class AuthService {
     }
 
     deserializeUser(id: string, done: Function) {
-        const user = this.userRepository.findOneBy({ id: +id })
+        const user = this.userRepository.findOneBy({id: +id})
         done(null, user)
     }
 

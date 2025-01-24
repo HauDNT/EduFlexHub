@@ -2,6 +2,7 @@ import passport from "passport";
 import { UsersService } from '@/modules/users/users.service';
 import { User } from "@/modules/users/entities/user.entity";
 import { VerifyCallback } from "passport-google-oauth20";
+import {EmailDTO} from "@/modules/auth/dto/forgot-password.dto";
 
 export class PassportOAuthConfig {
     constructor(

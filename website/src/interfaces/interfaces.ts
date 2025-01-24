@@ -13,3 +13,9 @@ export interface ReduxAuthState {
     user: ReduxUserState | null,
     token: string | null,
 }
+
+export interface StepResetForm {
+    id: string | number,
+    name: string,
+    fieldsName: string[],
+}

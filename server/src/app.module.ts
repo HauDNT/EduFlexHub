@@ -27,6 +27,7 @@ import { LoggerMiddleware } from './middleware/LoggerMiddleware';
 import { AuthModule } from './modules/auth/auth.module';
 import {APP_FILTER} from "@nestjs/core";
 import {HttpExceptionFilter} from "@/utils/httpExceptionFilter";
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
     imports: [
@@ -57,6 +58,7 @@ import {HttpExceptionFilter} from "@/utils/httpExceptionFilter";
         CartDetailsModule,
         VouchersModule,
         AuthModule,
+        MailModule,
     ],
     controllers: [AppController],
     providers: [
@@ -64,7 +66,7 @@ import {HttpExceptionFilter} from "@/utils/httpExceptionFilter";
         {
             provide: APP_FILTER,
             useClass: HttpExceptionFilter,
-        }
+        },
     ],
 })
 export class AppModule {

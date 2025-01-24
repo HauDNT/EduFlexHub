@@ -43,7 +43,10 @@ export class User {
     is_active: boolean;
 
     @Column({ default: '' })
-    code_expired: string;
+    code_expires: string;
+
+    @Column({ type: 'timestamp', nullable: true })
+    expires_at: Date | null;
 
     @Column({ default: false })
     is_2auth: boolean;

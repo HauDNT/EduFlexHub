@@ -1,9 +1,13 @@
 'use client'
 
 import React from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { Button } from "@/components/ui/button"
+import {zodResolver} from '@hookform/resolvers/zod'
+import {useForm} from 'react-hook-form'
+import Link from "next/link"
+import {useRouter} from "next/navigation"
+import {useDispatch} from 'react-redux'
+import {FaGithub, FaGoogle, FaFacebook} from 'react-icons/fa'
+import {Button} from "@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -12,20 +16,16 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { useDispatch } from 'react-redux'
-import { FaGithub, FaGoogle, FaFacebook } from 'react-icons/fa'
-import { setReduxAuthToken } from '@/redux/authSlice'
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
+import {setReduxAuthToken} from '@/redux/authSlice'
+import {Input} from "@/components/ui/input"
+import {useToast} from "@/hooks/use-toast"
 import axiosInstance, {handleAxiosError} from "@/utils/axiosInstance"
-import { LoginBody, LoginBodyType } from '@/schemas/auth.schema'
-import { LoginResponseInterface } from '@/interfaces/interfaces'
-import { setCookie } from '@/utils/cookieManage'
-import Link from "next/link";
-import {useRouter} from "next/navigation";
+import {LoginBody, LoginBodyType} from '@/schemas/auth.schema'
+import {LoginResponseInterface} from '@/interfaces/interfaces'
+import {setCookie} from '@/utils/cookieManage'
 
 const LoginForm: React.FC = () => {
-    const { toast } = useToast()
+    const {toast} = useToast()
     const dispatch = useDispatch()
     const router = useRouter()
 
@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
             const result = await axiosInstance
                 .post<LoginResponseInterface>(
                     '/auth/login',
-                    { ...values }
+                    {...values}
                 )
                 .then(res => (
                     {
@@ -60,11 +60,11 @@ const LoginForm: React.FC = () => {
                 ))
 
             if (result.payload.accessToken) {
-                await setCookie('eduflexhub-authentication',{
+                await setCookie('eduflexhub-authentication', JSON.stringify({
                     userId: result.payload.userId,
                     username: result.payload.username,
                     accessToken: result.payload.accessToken,
-                })
+                }))
 
                 dispatch(setReduxAuthToken({
                     userId: result.payload.userId,
@@ -95,26 +95,29 @@ const LoginForm: React.FC = () => {
                     <FormField
                         control={form.control}
                         name="username"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Tài khoản</FormLabel>
                                 <FormControl>
                                     <Input placeholder="nva@email.com" {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="password"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Mật khẩu</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input
+                                        {...field}
+                                        type={'password'}
+                                    />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
@@ -127,13 +130,13 @@ const LoginForm: React.FC = () => {
                                 Đăng ký ngay
                             </Link>
                         </div>
-                        <Link href='/fotget-password' className='text-blue-500'>
+                        <Link href='/forgot-password' className='text-blue-500'>
                             Quên mật khẩu
                         </Link>
                     </div>
                 </form>
             </Form>
-            <hr className="border-t border-gray-300 !mt-6" />
+            <hr className="border-t border-gray-300 !mt-6"/>
             <h3 className='font-thin text-center'>Hoặc đăng nhập với</h3>
             <div className='flex items-center justify-center space-x-8 !mt-4'>
                 <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
