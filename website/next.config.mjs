@@ -8,7 +8,10 @@ const nextConfig = {
                 permanent: true,
             }
         ]
-    }
+    },
+    sassOptions: {
+        implementation: 'sass-embedded',
+    },
 };
 
 export default nextConfig;
