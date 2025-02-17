@@ -1,5 +1,4 @@
 import '@/app/landing/styles.scss';
-import { redirect } from 'next/navigation';
 import StartButton from "@/app/landing/components/banner/StartButton";
 
 const Banner = () => {

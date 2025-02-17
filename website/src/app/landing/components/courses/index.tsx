@@ -76,7 +76,7 @@ const Courses = () => {
         slidesToShow: 3,
         slidesToScroll: 1,
         arrows: false,
-        autoplay: false,
+        autoplay: true,
         speed: 2000,
         autoplaySpeed: 2000,
         cssEase: "linear",
@@ -112,10 +112,10 @@ const Courses = () => {
     };
 
     return (
-        <div className='mb-30' id="courses-section">
-            <div className="mx-auto max-w-7xl mb-8">
+        <div id="courses-section">
+            <div className="mb-32 mx-auto max-w-7xl">
                 <div className='col-span-12'>
-                    <h3 className='text-center text-3xl md:text-5xl font-bold mb-12 pt-4'>Các khoá học của chúng tôi</h3>
+                    <h3 className='text-center text-3xl md:text-5xl font-bold mb-9 pt-4'>Các khoá học của chúng tôi</h3>
                     <div className="slider-container">
                         <Slider {...settings}>
                             {

@@ -6,7 +6,7 @@ const LandingPageFooter = () => {
             <div id='footer' className="bg-gray-100 h-1/2 w-full flex md:flex-row flex-col justify-between items-start py-20">
                 <div className="p-5">
                     <ul>
-                        <p className="text-gray-800 font-bold text-lg pb-4">Web Development</p>
+                        <p className="text-gray-800 font-bold text-lg pb-4">Lập trình Web</p>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
                             ReactJS
                         </li>
@@ -23,7 +23,7 @@ const LandingPageFooter = () => {
                 </div>
                 <div className="p-5">
                     <ul>
-                        <p className="text-gray-800 font-bold text-lg pb-4">IT Certifications</p>
+                        <p className="text-gray-800 font-bold text-lg pb-4">Chứng chỉ CNTT</p>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
                             Amazon AWS
                         </li>
@@ -43,7 +43,7 @@ const LandingPageFooter = () => {
                 </div>
                 <div className="p-5">
                     <ul>
-                        <p className="text-gray-800 font-bold text-lg pb-4">Certifications by Skill</p>
+                        <p className="text-gray-800 font-bold text-lg pb-4">Chứng chỉ theo kỹ năng cụ thể</p>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
                             Cyber security Certification
                         </li>
@@ -63,21 +63,21 @@ const LandingPageFooter = () => {
                 </div>
                 <div className="p-5">
                     <ul>
-                        <p className="text-gray-800 font-bold text-lg pb-4">Communication</p>
+                        <p className="text-gray-800 font-bold text-lg pb-4">Giao tiếp & Kỹ năng mềm</p>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
-                            Communication Skills
+                            Kỹ năng giao tiếp
                         </li>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
-                            Presentation Skills
+                            Thuyết trình
                         </li>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
-                            Public Speaking
+                            Nói trước đám đông
                         </li>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
-                            Writing
+                            Viết lách
                         </li>
                         <li className="text-gray-500 text-md pb-2 font-semibold hover:text-blue-600 cursor-pointer">
-                            Power Point
+                            Thiết kế Power Point
                         </li>
                     </ul>
                 </div>

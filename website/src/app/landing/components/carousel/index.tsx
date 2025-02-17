@@ -81,7 +81,7 @@ const Carousel = () => {
     };
 
     return (
-        <div className='text-center bg-lightpink'>
+        <div className='mb-20 text-center bg-lightpink'>
             <div className="mx-auto max-w-2xl py-16 px-4s sm:px-6 lg:max-w-7xl lg:px-8">
                 <div className="slider-container">
                     <Slider {...settings}>
