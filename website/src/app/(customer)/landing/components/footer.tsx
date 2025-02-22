@@ -1,5 +1,3 @@
-import {FaGithub, FaGoogle, FaFacebook} from 'react-icons/fa'
-
 const LandingPageFooter = () => {
     return (
         <>

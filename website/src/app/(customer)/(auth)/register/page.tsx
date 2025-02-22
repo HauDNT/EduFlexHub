@@ -1,6 +1,5 @@
-import RegisterForm from "@/app/(auth)/register/register-form";
-import imagePath from '../../../assets/images/login_bg.jpg';
-import styles from './styles.module.css'
+import RegisterForm from "@/app/(customer)/(auth)/register/register-form";
+import imagePath from '../../../../assets/images/login_bg.jpg';
 
 export default function RegisterPage() {
     return (
@@ -9,7 +8,7 @@ export default function RegisterPage() {
                 backgroundImage: `url(${imagePath.src})`,
                 backgroundSize: 'cover'
             }}
-            className={styles.pageContainer}>
+            className="flex justify-center items-center h-screen bg-cover bg-center">
             <RegisterForm />
         </div>
     )

@@ -1,6 +1,6 @@
 import React from "react";
-import LandingPageHeader from "@/app/landing/components/header";
-import LandingPageFooter from "@/app/landing/components/footer";
+import LandingPageHeader from "@/app/(customer)/landing/components/header";
+import LandingPageFooter from "@/app/(customer)/landing/components/footer";
 
 export default function LadingLayout({
     children,

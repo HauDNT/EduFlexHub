@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+const publicPaths = ['landing'];
 const privatePaths = ['/home'];
 const authPaths = ['/login', '/register'];
 
@@ -8,14 +9,14 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get('eduflexhub-authentication')?.value.valueOf('accessToken');
 
-    // Nếu truy cập vào các trang cần session mà không có token => chuyển hướng đến login
+    // Nếu truy cập vào các trang cần session mà không có token => chuyển hướng đến landing
     if (privatePaths.some(path => pathname.startsWith(path))) {
         if (!accessToken) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(new URL('/landing', request.url));
         }
     }
 
-    // Nếu đã có token mà truy cập vào trang login/register => chuyển hướng đến /me
+    // Nếu đã có token mà truy cập vào trang login/register => chuyển hướng đến /home
     if (authPaths.some(path => pathname.startsWith(path))) {
         if (accessToken) {
             return NextResponse.redirect(new URL('/home', request.url));
@@ -28,5 +29,5 @@ export function middleware(request: NextRequest) {
 
 // Config matcher
 export const config = {
-    matcher: ['/', '/home', '/login', '/register'],
+    matcher: ['/', '/landing', '/home', '/login', '/register'],
 };

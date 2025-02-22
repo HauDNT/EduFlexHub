@@ -1,9 +1,0 @@
-/* styles.module.css */
-.pageContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-size: cover;
-    background-position: center;
-}

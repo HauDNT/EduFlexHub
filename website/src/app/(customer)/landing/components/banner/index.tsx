@@ -1,5 +1,5 @@
-import '@/app/landing/styles.scss';
-import StartButton from "@/app/landing/components/banner/StartButton";
+import '@/app/(customer)/landing/styles.scss';
+import StartButton from "@/app/(customer)/landing/components/banner/StartButton";
 
 const Banner = () => {
     return (
