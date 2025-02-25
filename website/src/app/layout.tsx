@@ -5,7 +5,7 @@ import ReduxProvider from "@/redux/ReduxProvider";
 import "./globals.css";
 
 const webFont = localFont({
-    src: '../assets/fonts/OpenSans/OpenSans-Regular.ttf',
+    src: '../assets/fonts/Roboto/Roboto-Regular.ttf',
     display: 'swap'
 })
 
