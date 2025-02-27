@@ -8,6 +8,7 @@ import { PassportOAuthConfig } from '@/authentication/google_oauth2/google-passp
 import session from 'express-session';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import {SeedService} from "@/database/seeds/seed.service";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -54,6 +55,10 @@ async function bootstrap() {
 
     // Swagger
     swaggerConfig(app);
+
+    // Seeding data
+    // const seedService = app.get(SeedService);
+    // await seedService.seed();
 
     await app.listen(port ?? 8081);
 }

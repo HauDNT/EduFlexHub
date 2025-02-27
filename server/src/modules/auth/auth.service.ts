@@ -17,12 +17,15 @@ import {ExceptionHandler} from "@nestjs/core/errors/exception-handler";
 import {RegisterDTO} from "@/modules/auth/dto/register.dto";
 import {comparePassword, hashPassword} from "@/utils/bcrypt";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
+import {Role} from "@/modules/roles/entities/role.entity";
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
+        @InjectRepository(Role)
+        private roleRepository: Repository<Role>,
         @InjectRepository(SocialAccount)
         private socialAccountRepository: Repository<SocialAccount>,
         private jwtService: JwtService,
@@ -31,7 +34,7 @@ export class AuthService {
     };
 
     // --------------------------------------------------- Local account ---------------------------------------------------
-    async userLogin(account: UserLoginDTO): Promise<UserLoginResponseDTO> {
+    async loginAccount(account: UserLoginDTO): Promise<UserLoginResponseDTO> {
         if (!account || !account.username || !account.password) {
             throw new BadRequestException('Thông tin đăng nhập không hợp lệ')
         }
@@ -72,18 +75,18 @@ export class AuthService {
         }
     };
 
-    async userRegister(data: RegisterDTO): Promise<RegisterResponseDTO> {
+    async registerAccount(data: RegisterDTO): Promise<RegisterResponseDTO> {
         const queryRunner = this.dataSource.createQueryRunner();
 
         try {
             await queryRunner.connect();
             await queryRunner.startTransaction();
 
-            if (!data || !data.username || !data.password || !data.re_password) {
+            if (!data || !data.username || !data.password || !data.re_password || !data.account_type) {
                 throw new BadRequestException('Thông tin đăng ký không hợp lệ')
             }
 
-            const {username, password, re_password} = data;
+            const {username, password, re_password, account_type} = data;
             const existUser = await this.userRepository.findOneBy({username});
 
             if (existUser) {
@@ -96,6 +99,11 @@ export class AuthService {
 
             const hash_password = await hashPassword(password)
 
+            const role = await this.roleRepository.findOneBy({ id: +account_type});
+            if (!role) {
+                throw new BadRequestException('Loại tài khoản không hợp lệ');
+            }
+
             await queryRunner.manager.save(User, {
                 username: username,
                 password: hash_password,
@@ -104,6 +112,7 @@ export class AuthService {
                 address: '',
                 phone_number: '',
                 address_device: '',
+                role_id: role,
             });
 
             await queryRunner.commitTransaction();
@@ -150,7 +159,7 @@ export class AuthService {
         done(null, user)
     }
 
-    async accessWithGoogle(user: any): Promise<UserLoginResponseDTO> {
+    async accessWithGoogle(user: any , option: string): Promise<UserLoginResponseDTO> {
         const parseUser = JSON.parse(user);
 
         try {
@@ -159,20 +168,47 @@ export class AuthService {
                 email: parseUser.email
             });
 
-            existsUser !== null ?
-                await this.updateLoginSocialAccount(existsUser.id, parseUser) :
-                await this.savedNewSocialAccountData(parseUser);
+            if (existsUser !== null) {
+                const updateSocialAccountInfo = await this.updateLoginSocialAccount(existsUser.id, parseUser);
 
-            const payload: UserLoginPayload = {
-                userId: parseUser.id,
-                email: parseUser.email,
-                provider_token: parseUser.accessToken,
+                if (updateSocialAccountInfo) {
+                    const payload: UserLoginPayload = {
+                        userId: parseUser.id,
+                        email: parseUser.email,
+                        provider_token: parseUser.accessToken,
+                    }
+
+                    return {
+                        userId: parseUser.id,
+                        username: parseUser.email,
+                        accessToken: this.jwtService.sign(payload),
+                    }
+                }
+            }
+            else {
+                if (option === 'register') {
+                    const createSocialAccountInfo = await this.savedNewSocialAccountData(parseUser);
+
+                    if (createSocialAccountInfo) {
+                        const payload: UserLoginPayload = {
+                            userId: parseUser.id,
+                            email: parseUser.email,
+                            provider_token: parseUser.accessToken,
+                        }
+
+                        return {
+                            userId: parseUser.id,
+                            username: parseUser.email,
+                            accessToken: this.jwtService.sign(payload),
+                        }
+                    }
+                }
             }
 
             return {
-                userId: parseUser.id,
-                username: parseUser.email,
-                accessToken: this.jwtService.sign(payload),
+                userId: null,
+                username: null,
+                accessToken: null,
             }
         } catch (e) {
             console.log('--> Xảy ra lỗi trong quá trình đăng nhập với tài khoản Google: ', e);

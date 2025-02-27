@@ -13,10 +13,13 @@ import {SocialAccountsModule} from "../social_accounts/social_accounts.module";
 import {SocialAccount} from "@/modules/social_accounts/entities/social_account.entity";
 import {UsersService} from "@/modules/users/users.service";
 import {MailModule} from "@/modules/mail/mail.module";
+import {RolesModule} from "@/modules/roles/roles.module";
+import {RolesService} from "@/modules/roles/roles.service";
+import {Role} from "@/modules/roles/entities/role.entity";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, SocialAccount]),
+        TypeOrmModule.forFeature([User, SocialAccount, Role]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
@@ -29,6 +32,7 @@ import {MailModule} from "@/modules/mail/mail.module";
         }),
         UsersModule,
         MailModule,
+        RolesModule,
         SocialAccountsModule,
         PassportModule.register({
             defaultStrategy: 'google',
@@ -39,6 +43,7 @@ import {MailModule} from "@/modules/mail/mail.module";
     providers: [
         AuthService,
         UsersService,
+        RolesService,
         JWTStrategy,
         GoogleStrategy,
     ],

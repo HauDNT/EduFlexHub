@@ -1,10 +1,10 @@
 'use client'
 import React from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import {zodResolver} from '@hookform/resolvers/zod'
+import {useForm} from 'react-hook-form'
 import Link from "next/link";
 import {HttpStatusCode} from "axios";
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -13,16 +13,26 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { useRouter } from 'next/navigation'
-import { IoIosArrowBack } from "react-icons/io"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {useRouter} from 'next/navigation'
+import {IoIosArrowBack} from "react-icons/io"
+import {Input} from "@/components/ui/input"
+import {useToast} from "@/hooks/use-toast"
 import axiosInstance, {handleAxiosError} from "@/utils/axiosInstance"
-import { RegisterBody, RegisterBodyType } from '@/schemas/auth.schema'
+import {RegisterBody, RegisterBodyType} from '@/schemas/auth.schema'
+import {FaFacebook, FaGithub, FaGoogle} from "react-icons/fa";
 
 const RegisterForm: React.FC = () => {
     const router = useRouter()
-    const { toast } = useToast()
+    const {toast} = useToast()
 
     const form = useForm<RegisterBodyType>({
         resolver: zodResolver(RegisterBody),
@@ -52,7 +62,7 @@ const RegisterForm: React.FC = () => {
                 return;
             }
 
-            const result = await axiosInstance.post<any>('/auth/register', { ...values });
+            const result = await axiosInstance.post<any>('/auth/register', {...values});
 
             if (result.status === HttpStatusCode.Created) {
                 toast({
@@ -82,39 +92,61 @@ const RegisterForm: React.FC = () => {
                 <FormField
                     control={form.control}
                     name="username"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Tài khoản</FormLabel>
                             <FormControl>
                                 <Input placeholder="nva@email.com" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
                 <FormField
                     control={form.control}
                     name="password"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Mật khẩu</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
                 <FormField
                     control={form.control}
                     name="re_password"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Xác nhận mật khẩu</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="account_type"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Loại tài khoản</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Chọn loại tài khoản muốn đăng ký"/>
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="2">Học viên</SelectItem>
+                                    <SelectItem value="3">Giảng viên</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
@@ -124,6 +156,20 @@ const RegisterForm: React.FC = () => {
                     <IoIosArrowBack size={20}/>
                     <span>Quay lại</span>
                 </Link>
+
+                <hr className="border-t border-gray-300 !mt-6"/>
+                <h3 className='font-thin text-center'>Hoặc đăng ký với (dành cho học viên)</h3>
+                <div className='flex items-center justify-center space-x-8 !mt-4'>
+                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google?option=register`}>
+                        <FaGithub size={30}/>
+                    </Link>
+                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google?option=register`}>
+                        <FaGoogle size={30}/>
+                    </Link>
+                    <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google?option=register`}>
+                        <FaFacebook size={30}/>
+                    </Link>
+                </div>
             </form>
         </Form>
     )

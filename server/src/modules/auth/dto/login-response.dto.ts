@@ -3,13 +3,13 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 export class UserLoginResponseDTO {
     @IsNumber()
     @IsNotEmpty()
-    userId: number;
+    userId: number | null;
 
     @IsString()
     @IsNotEmpty()
-    username: string;
+    username: string | null;
 
     @IsString()
     @IsNotEmpty()
-    accessToken: string;
+    accessToken: string | null;
 }

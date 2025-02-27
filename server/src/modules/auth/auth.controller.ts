@@ -3,12 +3,13 @@ import {
     Controller,
     Get, HttpException,
     InternalServerErrorException,
-    Post,
+    Post, Query,
     Req,
     Res,
     UnauthorizedException,
     UseGuards
 } from '@nestjs/common';
+import * as base64url from 'base64-url';
 import {AuthService} from './auth.service';
 import {UserLoginDTO} from './dto/login-account.dto';
 import {UserLoginResponseDTO} from './dto/login-response.dto';
@@ -20,6 +21,7 @@ import {generateOTP} from "@/utils/generateOTP";
 import {MailService} from "@/modules/mail/mail.service";
 import {OtpVerifyDTO} from "@/modules/auth/dto/otp-verify.dto";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
+import {base64UrlDecode, base64UrlEncode} from "@/utils/base64Url_EDCode";
 
 @Controller('auth')
 export class AuthController {
@@ -30,20 +32,20 @@ export class AuthController {
     ) {
     }
 
-    // Local local
+    // Login in local
     @Post('login')
     async login(
         @Body() account: UserLoginDTO
     ): Promise<UserLoginResponseDTO> {
-        return this.authService.userLogin(account);
+        return this.authService.loginAccount(account);
     }
 
-    // Register local
+    // Register account in local
     @Post('register')
     async register(
         @Body() data: RegisterDTO
     ): Promise<RegisterResponseDTO> {
-        return this.authService.userRegister(data);
+        return this.authService.registerAccount(data);
     }
 
     // Forgot password
@@ -69,6 +71,7 @@ export class AuthController {
         return false;
     }
 
+    // OTP verify
     @Post('otp-authentication')
     async OTPAuthentication(
         @Body() data: OtpVerifyDTO
@@ -114,20 +117,33 @@ export class AuthController {
         }
     }
 
-    // Google
+    // Google OAuth
     @Get('google/')
-    @UseGuards(GoogleGuard)
-    googleLogin() {
+    // @UseGuards(GoogleGuard)          // ==> sử dụng SAI - Đặt @UseGuards(GoogleGuard) ở đây làm kích hoạt cơ chế Google OAuth2 ngay từ đầu
+                                        // làm mất đi query params 'options' truyền vào
+    async googleLogin(@Req() req, @Res() res, @Query('option') option: string) {
+        console.log('==> Query params trước khi redirect: ', option);
+
+        const state = option || 'login';
+
+        res.redirect(
+            `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.CLIENT_ID}` +
+            `&redirect_uri=${process.env.CALLBACK_URL}` +
+            `&response_type=code&scope=email profile` +
+            `&state=${encodeURIComponent(state)}`
+        );
     }
 
     @Get('google/redirect')
     @UseGuards(GoogleGuard)
-    async googleRedirect(@Req() req, @Res() res) {
+    async googleRedirect(@Req() req, @Res() res, @Query('state') option: string) {
+        console.log('==> Query params sau redirect: ', option);
+
         if (req.user) {
             const user = JSON.stringify(req.user);
-            const result = await this.authService.accessWithGoogle(user);
+            const result = await this.authService.accessWithGoogle(user, option);
 
-            if (result) {
+            if (result.userId !== null) {
                 res.cookie(
                     'eduflexhub-authentication',
                     JSON.stringify({
@@ -143,9 +159,11 @@ export class AuthController {
                 );
 
                 return res.redirect('http://localhost:3000/home');
+            } else {
+                return res.redirect('http://localhost:3000/login?google-unauth=true');
             }
         } else {
-            return res.redirect(`http://localhost:3000/?user=error`);
+            return res.redirect(`http://localhost:3000/login`);
         }
     }
 }

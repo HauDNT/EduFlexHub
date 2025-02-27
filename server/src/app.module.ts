@@ -5,9 +5,8 @@ import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 
 import { UsersModule } from '@/modules/users/users.module';
-import { typeOrmAsyncConfig } from '@/database/data-source';
+import { typeOrmAsyncConfig } from '@/database/typeorm-config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminsModule } from './modules/admins/admins.module';
 import { SocialAccountsModule } from './modules/social_accounts/social_accounts.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ActionsModule } from './modules/actions/actions.module';
@@ -28,6 +27,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import {APP_FILTER} from "@nestjs/core";
 import {HttpExceptionFilter} from "@/utils/httpExceptionFilter";
 import { MailModule } from './modules/mail/mail.module';
+import {SeedModule} from "@/database/seeds/seed.module";
 
 @Module({
     imports: [
@@ -41,7 +41,6 @@ import { MailModule } from './modules/mail/mail.module';
         }),
         TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
         UsersModule,
-        AdminsModule,
         SocialAccountsModule,
         RolesModule,
         ActionsModule,
@@ -59,6 +58,7 @@ import { MailModule } from './modules/mail/mail.module';
         VouchersModule,
         AuthModule,
         MailModule,
+        SeedModule,
     ],
     controllers: [AppController],
     providers: [

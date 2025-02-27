@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import Link from "next/link"
-import {useRouter} from "next/navigation"
+import {useRouter, useSearchParams} from "next/navigation"
 import {useDispatch} from 'react-redux'
 import {FaGithub, FaGoogle, FaFacebook} from 'react-icons/fa'
 import {Button} from "@/components/ui/button"
@@ -25,9 +25,21 @@ import {LoginResponseInterface} from '@/interfaces/interfaces'
 import {setCookie} from '@/utils/cookieManage'
 
 const LoginForm: React.FC = () => {
+    const [ssoUnAuth, setSsoUnAuth] = useState('');
     const {toast} = useToast()
     const dispatch = useDispatch()
     const router = useRouter()
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const googleUnAuthParam = searchParams.get('google-unauth');
+        const githubUnAuthParam = searchParams.get('github-unauth');
+        const facebookUnAuthParam = searchParams.get('facebook-unauth');
+
+        if (googleUnAuthParam) setSsoUnAuth('Google')
+        else if (githubUnAuthParam) setSsoUnAuth('Github')
+        else if (facebookUnAuthParam) setSsoUnAuth('Facebook')
+    }, [searchParams.toString()]);
 
     const form = useForm<LoginBodyType>({
         resolver: zodResolver(LoginBody),
@@ -137,18 +149,24 @@ const LoginForm: React.FC = () => {
                 </form>
             </Form>
             <hr className="border-t border-gray-300 !mt-6"/>
-            <h3 className='font-thin text-center'>Hoặc đăng nhập với</h3>
+            <h3 className='font-thin text-center'>Hoặc đăng nhập với (dành cho học viên)</h3>
             <div className='flex items-center justify-center space-x-8 !mt-4'>
-                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google?option=login`}>
                     <FaGithub size={30}/>
                 </Link>
-                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google?option=login`}>
                     <FaGoogle size={30}/>
                 </Link>
-                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google`}>
+                <Link href={`${process.env.NEXT_PUBLIC_URL_SERVER}/auth/google?option=login`}>
                     <FaFacebook size={30}/>
                 </Link>
             </div>
+            {
+                ssoUnAuth !== '' ?
+                    (
+                        <h3 className='pt-6 text-center text-red-500'>Tài khoản {ssoUnAuth} của bạn chưa được đăng ký với EduFlexHub</h3>
+                    ) : (<></>)
+            }
         </div>
     )
 }

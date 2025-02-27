@@ -1,22 +1,19 @@
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TypeOrmModuleAsyncOptions, TypeOrmModuleOptions } from "@nestjs/typeorm";
+import * as dotenv from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
+dotenv.config({ path: '.env.development' });
 
-export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
-    imports: [ConfigModule],
-    inject: [ConfigService],
-    useFactory: async (
-        configService: ConfigService,
-    ): Promise<TypeOrmModuleOptions> => {
-        return {
-            type: 'mysql',
-            host: configService.get<string>('dbHost'),
-            port: configService.get<number>('dbPort'),
-            database: configService.get<string>('dbName'),
-            username: configService.get<string>('dbUsername'),
-            password: configService.get<string>('dbPassword'),
-            entities: ['dist/**/*.entity.js'],
-            synchronize: true,
-            migrations: ['dist/db/migrations/*.js'],
-        }
-    }
-}
+export const dataSourceOptions: DataSourceOptions = {
+    type: 'mysql',
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    database: process.env.DB_NAME,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    entities: ['dist/**/*.entity.js'],
+    migrations: ['src/database/migrations/*{.ts,.js}'],
+    migrationsTableName: 'migrations_table',
+    synchronize: true,
+};
+
+const dataSource = new DataSource(dataSourceOptions);
+export default dataSource;

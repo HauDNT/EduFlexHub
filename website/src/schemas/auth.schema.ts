@@ -13,9 +13,10 @@ export type LoginBodyType = z.TypeOf<typeof LoginBody>
 // Register schema
 export const RegisterBody = z
     .object({
-        username: z.string().min(8).max(16),
-        password: z.string().min(8).max(16),
-        re_password: z.string().min(8).max(16),
+        username: z.string().min(8).max(50),
+        password: z.string().min(8).max(50),
+        re_password: z.string().min(8).max(50),
+        account_type: z.string().min(1).max(1),
     })
     .strict()
 
