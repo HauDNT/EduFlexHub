@@ -16,10 +16,13 @@ import {MailModule} from "@/modules/mail/mail.module";
 import {RolesModule} from "@/modules/roles/roles.module";
 import {RolesService} from "@/modules/roles/roles.service";
 import {Role} from "@/modules/roles/entities/role.entity";
+import {SessionsModule} from "@/modules/sessions/sessions.module";
+import {SessionsService} from "@/modules/sessions/sessions.service";
+import {Session} from "@/modules/sessions/entities/session.entity";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, SocialAccount, Role]),
+        TypeOrmModule.forFeature([User, SocialAccount, Role, Session]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
@@ -33,6 +36,7 @@ import {Role} from "@/modules/roles/entities/role.entity";
         UsersModule,
         MailModule,
         RolesModule,
+        SessionsModule,
         SocialAccountsModule,
         PassportModule.register({
             defaultStrategy: 'google',
@@ -44,6 +48,7 @@ import {Role} from "@/modules/roles/entities/role.entity";
         AuthService,
         UsersService,
         RolesService,
+        SessionsService,
         JWTStrategy,
         GoogleStrategy,
     ],

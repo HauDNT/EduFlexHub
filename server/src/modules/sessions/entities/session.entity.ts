@@ -9,6 +9,12 @@ export class Session {
     @Column()
     device_ip: string;
 
+    @Column()
+    user_agent: string;
+
+    @Column({ unique: true })
+    device_fingerprint: string; // Hash User-Agent + IP
+
     @Column({ type: 'timestamp', nullable: true })
     created_at: Date | null;
 

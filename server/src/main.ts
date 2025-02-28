@@ -1,20 +1,23 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import { swaggerConfig } from './config/SwaggerConfig';
-import { ValidationPipe } from '@nestjs/common';
-import { UsersService } from '@/modules/users/users.service';
-import { PassportOAuthConfig } from '@/authentication/google_oauth2/google-passport.config';
+import {NestFactory} from '@nestjs/core';
+import {AppModule} from './app.module';
+import {ConfigService} from '@nestjs/config';
+import {swaggerConfig} from './config/SwaggerConfig';
+import {ValidationPipe} from '@nestjs/common';
+import {UsersService} from '@/modules/users/users.service';
+import {PassportOAuthConfig} from '@/authentication/google_oauth2/google-passport.config';
 import session from 'express-session';
 import passport from 'passport';
+import * as requestIp from 'request-ip';
 import cookieParser from 'cookie-parser';
-import {SeedService} from "@/database/seeds/seed.service";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
     const usersService = app.get(UsersService);
     const port = configService.get('PORT');
+
+    // Using request-ip middleware
+    app.use(requestIp.mw());
 
     // Apply cookie parser to access cookies from request
     app.use(cookieParser());
@@ -35,7 +38,7 @@ async function bootstrap() {
             secret: configService.get('EXPRESS_SESSION_KEY'),
             resave: false,
             saveUninitialized: false,
-            cookie: { secure: false }    // Out of date after 1 hour
+            cookie: {secure: false}    // Out of date after 1 hour
         })
     );
 
@@ -47,11 +50,12 @@ async function bootstrap() {
     app.use(passport.session());
 
     // Apply all ValidationPipe
-    app.useGlobalPipes(new ValidationPipe({
-        transform: true,
-        whitelist: true,
-        forbidNonWhitelisted: true,
-    }));
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }));
 
     // Swagger
     swaggerConfig(app);
@@ -62,4 +66,5 @@ async function bootstrap() {
 
     await app.listen(port ?? 8081);
 }
+
 bootstrap();

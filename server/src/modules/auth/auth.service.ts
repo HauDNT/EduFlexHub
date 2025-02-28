@@ -18,6 +18,7 @@ import {RegisterDTO} from "@/modules/auth/dto/register.dto";
 import {comparePassword, hashPassword} from "@/utils/bcrypt";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
 import {Role} from "@/modules/roles/entities/role.entity";
+import {SessionsService} from "@/modules/sessions/sessions.service";
 
 @Injectable()
 export class AuthService {
@@ -29,16 +30,13 @@ export class AuthService {
         @InjectRepository(SocialAccount)
         private socialAccountRepository: Repository<SocialAccount>,
         private jwtService: JwtService,
+        private sessionService: SessionsService,
         private dataSource: DataSource,
     ) {
     };
 
     // --------------------------------------------------- Local account ---------------------------------------------------
-    async loginAccount(account: UserLoginDTO): Promise<UserLoginResponseDTO> {
-        if (!account || !account.username || !account.password) {
-            throw new BadRequestException('Thông tin đăng nhập không hợp lệ')
-        }
-
+    async loginAccount(account: UserLoginDTO, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
         try {
             const user = await this.userRepository.findOneBy({
                 username: account.username,
@@ -47,6 +45,9 @@ export class AuthService {
             if (!user) {
                 throw new UnauthorizedException('Tài khoản không tồn tại')
             }
+
+            // Tạo phiên đăng nhập mới
+            await this.sessionService.handleSessionsWhenLogin(user, userAgent, ip);
 
             const isPasswordValid: boolean = await comparePassword(account.password, user.password);
 
@@ -123,7 +124,6 @@ export class AuthService {
             }
         } catch (e) {
             await queryRunner.rollbackTransaction();
-
             console.log(`Lỗi đăng ký: ${e.message}`)
 
             if (e instanceof HttpException) {
@@ -159,7 +159,11 @@ export class AuthService {
         done(null, user)
     }
 
-    async accessWithGoogle(user: any , option: string): Promise<UserLoginResponseDTO> {
+    async accessWithGoogle(user: any , option: string, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
+        if (!user || !userAgent || !ip) {
+            throw new BadRequestException('Thông tin đăng nhập không hợp lệ')
+        }
+
         const parseUser = JSON.parse(user);
 
         try {
@@ -172,6 +176,14 @@ export class AuthService {
                 const updateSocialAccountInfo = await this.updateLoginSocialAccount(existsUser.id, parseUser);
 
                 if (updateSocialAccountInfo) {
+                    const userInfo = await this.userRepository.findOneBy({ email: user.email })
+
+                    if (!userInfo) {
+                        throw new UnauthorizedException('Tài khoản Gmail chưa được đăng ký với EduFlexHub')
+                    }
+
+                    await this.sessionService.handleSessionsWhenLogin(userInfo, userAgent, ip);
+
                     const payload: UserLoginPayload = {
                         userId: parseUser.id,
                         email: parseUser.email,

@@ -16,9 +16,7 @@ import {
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
@@ -40,6 +38,7 @@ const RegisterForm: React.FC = () => {
             username: '',
             password: '',
             re_password: '',
+            account_type: '',
         }
     })
 

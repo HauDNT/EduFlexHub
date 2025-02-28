@@ -87,11 +87,9 @@ const LoginForm: React.FC = () => {
                 router.push('/home')
             }
         } catch (error) {
-            const errorMessage = handleAxiosError(error);
-
             toast({
                 title: "Đăng nhập thất bại",
-                description: errorMessage,
+                description: "Hãy kiểm tra lại thông tin đăng nhập",
                 variant: "destructive",
             });
         }

@@ -6,10 +6,10 @@ import {
     Post, Query,
     Req,
     Res,
+    Ip,
     UnauthorizedException,
     UseGuards
 } from '@nestjs/common';
-import * as base64url from 'base64-url';
 import {AuthService} from './auth.service';
 import {UserLoginDTO} from './dto/login-account.dto';
 import {UserLoginResponseDTO} from './dto/login-response.dto';
@@ -22,6 +22,7 @@ import {MailService} from "@/modules/mail/mail.service";
 import {OtpVerifyDTO} from "@/modules/auth/dto/otp-verify.dto";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
 import {base64UrlDecode, base64UrlEncode} from "@/utils/base64Url_EDCode";
+import {IpAddress} from "@/decorators/IpAddress";
 
 @Controller('auth')
 export class AuthController {
@@ -35,9 +36,12 @@ export class AuthController {
     // Login in local
     @Post('login')
     async login(
+        @IpAddress() ipAddress,
+        @Req() request: Request,
         @Body() account: UserLoginDTO
     ): Promise<UserLoginResponseDTO> {
-        return this.authService.loginAccount(account);
+        const userAgent = request.headers['user-agent'];
+        return this.authService.loginAccount(account, userAgent, ipAddress);
     }
 
     // Register account in local
@@ -120,28 +124,32 @@ export class AuthController {
     // Google OAuth
     @Get('google/')
     // @UseGuards(GoogleGuard)          // ==> sử dụng SAI - Đặt @UseGuards(GoogleGuard) ở đây làm kích hoạt cơ chế Google OAuth2 ngay từ đầu
-                                        // làm mất đi query params 'options' truyền vào
-    async googleLogin(@Req() req, @Res() res, @Query('option') option: string) {
-        console.log('==> Query params trước khi redirect: ', option);
-
-        const state = option || 'login';
+    // làm mất đi query params 'options' truyền vào
+    async googleLogin(
+        @Req() req,
+        @Res() res,
+        @IpAddress() ipAddress,
+        @Query('option') option: string
+    ) {
+        const userAgent = (req.headers['user-agent'] || 'unknown').substring(0, 200);
+        const state = encodeURIComponent(JSON.stringify({ option, userAgent, ipAddress }))
 
         res.redirect(
             `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.CLIENT_ID}` +
             `&redirect_uri=${process.env.CALLBACK_URL}` +
             `&response_type=code&scope=email profile` +
-            `&state=${encodeURIComponent(state)}`
+            `&state=${state}`
         );
     }
 
     @Get('google/redirect')
     @UseGuards(GoogleGuard)
-    async googleRedirect(@Req() req, @Res() res, @Query('state') option: string) {
-        console.log('==> Query params sau redirect: ', option);
+    async googleRedirect(@Req() req, @Res() res, @Query('state') state: string) {
+        const { option, userAgent, ipAddress } = JSON.parse(decodeURIComponent(state));
 
         if (req.user) {
             const user = JSON.stringify(req.user);
-            const result = await this.authService.accessWithGoogle(user, option);
+            const result = await this.authService.accessWithGoogle(user, option, userAgent, ipAddress);
 
             if (result.userId !== null) {
                 res.cookie(
