@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import Link from "next/link";
@@ -20,7 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {useRouter} from 'next/navigation'
+import {useRouter, useSearchParams} from 'next/navigation'
 import {IoIosArrowBack} from "react-icons/io"
 import {Input} from "@/components/ui/input"
 import {useToast} from "@/hooks/use-toast"
@@ -29,8 +29,20 @@ import {RegisterBody, RegisterBodyType} from '@/schemas/auth.schema'
 import {FaFacebook, FaGithub, FaGoogle} from "react-icons/fa";
 
 const RegisterForm: React.FC = () => {
+    const [ssoRegistered, setSsoRegistered] = useState('');
+    const searchParams = useSearchParams();
     const router = useRouter()
     const {toast} = useToast()
+
+    useEffect(() => {
+        const googleUnAuthParam = searchParams.get('google-unauth')
+        const githubUnAuthParam = searchParams.get('github-unauth')
+        const facebookUnAuthParam = searchParams.get('facebook-unauth')
+
+        if (googleUnAuthParam) setSsoRegistered('Google')
+        else if (githubUnAuthParam) setSsoRegistered('Github')
+        else if (facebookUnAuthParam) setSsoRegistered('Facebook')
+    }, [searchParams.toString()]);
 
     const form = useForm<RegisterBodyType>({
         resolver: zodResolver(RegisterBody),
@@ -169,6 +181,14 @@ const RegisterForm: React.FC = () => {
                         <FaFacebook size={30}/>
                     </Link>
                 </div>
+
+                {
+                    ssoRegistered !== '' ?
+                        (
+                            <h3 className='pt-6 text-center text-red-500'>Tài khoản {ssoRegistered} của bạn đã được đăng ký
+                                với EduFlexHub</h3>
+                        ) : (<></>)
+                }
             </form>
         </Form>
     )

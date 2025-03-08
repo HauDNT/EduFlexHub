@@ -13,7 +13,8 @@ const authSlice = createSlice({
         setReduxAuthToken: (state, action) => {
             state.user = {
                 userId: action.payload.userId,
-                username: action.payload.username,
+                username: action.payload.username ?? undefined,
+                email: action.payload.email ?? undefined,
             };
             state.token = action.payload.accessToken;
         },

@@ -21,8 +21,8 @@ import {generateOTP} from "@/utils/generateOTP";
 import {MailService} from "@/modules/mail/mail.service";
 import {OtpVerifyDTO} from "@/modules/auth/dto/otp-verify.dto";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
-import {base64UrlDecode, base64UrlEncode} from "@/utils/base64Url_EDCode";
 import {IpAddress} from "@/decorators/IpAddress";
+import {LogoutDTO} from "@/modules/auth/dto/logout.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -124,7 +124,7 @@ export class AuthController {
     // Google OAuth
     @Get('google/')
     // @UseGuards(GoogleGuard)          // ==> sử dụng SAI - Đặt @UseGuards(GoogleGuard) ở đây làm kích hoạt cơ chế Google OAuth2 ngay từ đầu
-    // làm mất đi query params 'options' truyền vào
+    // làm mất đi query params 'option' truyền vào
     async googleLogin(
         @Req() req,
         @Res() res,
@@ -132,7 +132,7 @@ export class AuthController {
         @Query('option') option: string
     ) {
         const userAgent = (req.headers['user-agent'] || 'unknown').substring(0, 200);
-        const state = encodeURIComponent(JSON.stringify({ option, userAgent, ipAddress }))
+        const state = encodeURIComponent(JSON.stringify({option, userAgent, ipAddress}))
 
         res.redirect(
             `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.CLIENT_ID}` +
@@ -145,33 +145,65 @@ export class AuthController {
     @Get('google/redirect')
     @UseGuards(GoogleGuard)
     async googleRedirect(@Req() req, @Res() res, @Query('state') state: string) {
-        const { option, userAgent, ipAddress } = JSON.parse(decodeURIComponent(state));
+        const {option, userAgent, ipAddress} = JSON.parse(decodeURIComponent(state));
 
         if (req.user) {
             const user = JSON.stringify(req.user);
             const result = await this.authService.accessWithGoogle(user, option, userAgent, ipAddress);
 
             if (result.userId !== null) {
-                res.cookie(
-                    'eduflexhub-authentication',
-                    JSON.stringify({
-                        userId: result.userId,
-                        username: result.username,
-                        accessToken: result.accessToken,
-                    }),
-                    {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        maxAge: 3600000,
-                    }
-                );
+                if (option === 'login') {
+                    res.cookie(
+                        'eduflexhub-authentication',
+                        JSON.stringify({
+                            userId: result.userId,
+                            email: result.email,
+                            accessToken: result.accessToken,
+                        }),
+                        {
+                            httpOnly: true,
+                            secure: process.env.NODE_ENV === 'production',
+                            maxAge: 3600000,
+                        }
+                    );
 
-                return res.redirect('http://localhost:3000/home');
+                    return res.redirect('http://localhost:3000/home');
+                } else if (option === 'register') {
+                    return res.redirect('http://localhost:3000/login');
+                }
             } else {
-                return res.redirect('http://localhost:3000/login?google-unauth=true');
+                if (option === 'login') {
+                    return res.redirect('http://localhost:3000/login?google-unauth=true');
+                } else if (option === 'register') {
+                    return res.redirect('http://localhost:3000/register?google-unauth=true');
+                }
             }
         } else {
             return res.redirect(`http://localhost:3000/login`);
+        }
+    }
+
+    // Logout - Đăng xuất
+    @Post('logout')
+    async logout(
+        @Req() req,
+        @Res() res,
+        @Body() body: LogoutDTO,
+        @IpAddress() ipAddress,
+    ): Promise<{ message: string }> {
+        const userAgent = req.headers['user-agent'];
+        const userIdentifier = body.userIdentifier;
+
+        // Xoá session của người dùng trên thiết bị này
+        // Cập nhật isOnline -> 0
+        const logoutResult = await this.authService.logout(userIdentifier, userAgent, ipAddress);
+
+        // Xoá cookie trên trình duyệt
+        if (logoutResult) {
+            res.clearCookie('eduflexhub-authentication');
+            return res.status(200).json({message: 'Đăng xuất thành công'});
+        } else {
+            return res.status(400).json({message: 'Không tìm thấy phiên để đăng xuất'});
         }
     }
 }

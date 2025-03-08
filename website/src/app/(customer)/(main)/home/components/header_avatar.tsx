@@ -24,9 +24,45 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import axiosInstance from "@/utils/axiosInstance"
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { removeReduxAuthToken } from '@/redux/authSlice';
+import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
 
 const HeaderAvatar = ({uri}: { uri?: string }) => {
     const defaultAvatar = "https://img.freepik.com/premium-vector/businessman-avatar-illustration-cartoon-user-portrait-user-profile-icon_118339-5502.jpg?w=740";
+    const { user, token } = useSelector((state: RootState) => state.auth)
+    const dispatch = useDispatch()
+    const {toast} = useToast()
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        const userIdentifier = user['username'] || user['email'];
+
+        const logoutResult = await axiosInstance.post(
+            '/auth/logout',
+            {
+                userIdentifier,
+            }
+        );
+
+        if (logoutResult.status === 200) {
+            dispatch(removeReduxAuthToken());
+            toast({
+                title: "Đăng xuất thành công",
+            });
+
+            router.push('/login')
+        } else {
+            toast({
+                title: "Đăng xuất thất bại",
+                description: "Vui lòng thử lại sau",
+                variant: "destructive",
+            });
+        }
+    }
 
     return (
         <DropdownMenu>
@@ -84,7 +120,7 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
                     <span>Cài đặt</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                     <LogOut/>
                     <span>Đăng xuất</span>
                 </DropdownMenuItem>

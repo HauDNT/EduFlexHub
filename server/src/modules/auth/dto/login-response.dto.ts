@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, IsEmail } from "class-validator";
 
 export class UserLoginResponseDTO {
     @IsNumber()
@@ -7,7 +7,11 @@ export class UserLoginResponseDTO {
 
     @IsString()
     @IsNotEmpty()
-    username: string | null;
+    username?: string | null;
+
+    @IsString()
+    @IsNotEmpty()
+    email?: string | null;
 
     @IsString()
     @IsNotEmpty()

@@ -100,7 +100,7 @@ export class AuthService {
 
             const hash_password = await hashPassword(password)
 
-            const role = await this.roleRepository.findOneBy({ id: +account_type});
+            const role = await this.roleRepository.findOneBy({id: +account_type});
             if (!role) {
                 throw new BadRequestException('Loại tài khoản không hợp lệ');
             }
@@ -159,7 +159,7 @@ export class AuthService {
         done(null, user)
     }
 
-    async accessWithGoogle(user: any , option: string, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
+    async accessWithGoogle(user: any, option: string, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
         if (!user || !userAgent || !ip) {
             throw new BadRequestException('Thông tin đăng nhập không hợp lệ')
         }
@@ -167,37 +167,34 @@ export class AuthService {
         const parseUser = JSON.parse(user);
 
         try {
-            // Check account with email exists?
+            // Check account with email or username exists?
             const existsUser = await this.userRepository.findOneBy({
                 email: parseUser.email
             });
 
             if (existsUser !== null) {
-                const updateSocialAccountInfo = await this.updateLoginSocialAccount(existsUser.id, parseUser);
+                if (option === 'login') {
+                    const updateSocialAccountInfo = await this.updateLoginSocialAccount(existsUser.id, parseUser);
 
-                if (updateSocialAccountInfo) {
-                    const userInfo = await this.userRepository.findOneBy({ email: user.email })
+                    if (updateSocialAccountInfo) {
+                        const userInfo = await this.userRepository.findOneBy({email: parseUser.email})
 
-                    if (!userInfo) {
-                        throw new UnauthorizedException('Tài khoản Gmail chưa được đăng ký với EduFlexHub')
-                    }
+                        await this.sessionService.handleSessionsWhenLogin(userInfo, userAgent, ip);
 
-                    await this.sessionService.handleSessionsWhenLogin(userInfo, userAgent, ip);
+                        const payload: UserLoginPayload = {
+                            userId: existsUser.id,
+                            email: parseUser.email,
+                            provider_token: parseUser.accessToken,
+                        }
 
-                    const payload: UserLoginPayload = {
-                        userId: parseUser.id,
-                        email: parseUser.email,
-                        provider_token: parseUser.accessToken,
-                    }
-
-                    return {
-                        userId: parseUser.id,
-                        username: parseUser.email,
-                        accessToken: this.jwtService.sign(payload),
+                        return {
+                            userId: existsUser.id,
+                            email: parseUser.email,
+                            accessToken: this.jwtService.sign(payload),
+                        }
                     }
                 }
-            }
-            else {
+            } else {
                 if (option === 'register') {
                     const createSocialAccountInfo = await this.savedNewSocialAccountData(parseUser);
 
@@ -210,7 +207,7 @@ export class AuthService {
 
                         return {
                             userId: parseUser.id,
-                            username: parseUser.email,
+                            email: parseUser.email,
                             accessToken: this.jwtService.sign(payload),
                         }
                     }
@@ -224,7 +221,12 @@ export class AuthService {
             }
         } catch (e) {
             console.log('--> Xảy ra lỗi trong quá trình đăng nhập với tài khoản Google: ', e);
-            throw new ExceptionHandler();
+
+            if (e instanceof HttpException) {
+                throw e;
+            }
+
+            throw new InternalServerErrorException('Đã xảy ra lỗi ở phía server trong quá trình đăng ký tài khoản');
         }
     }
 
@@ -280,5 +282,27 @@ export class AuthService {
             console.log('--> Xảy ra lỗi trong quá trình lưu phiên đăng nhập mới từ tài khoản Google: ', e);
             throw new ExceptionHandler();
         }
+    }
+
+    async logout(userIdentifier: string, userAgent: string, ip: string): Promise<boolean> {
+        const user = await this.userRepository.findOneBy([
+            { username: userIdentifier },
+            { email: userIdentifier },
+        ]);
+
+        const deleteSession = await this.sessionService.deleteSession(user, userAgent, ip);
+
+        if (deleteSession.affected >= 0) {
+            user.is_online = false;
+            const updateAccountStatus = await this.userRepository.save({
+                id: user.id,
+                is_online: false,
+                updated_at: new Date(),
+            })
+
+            return !!updateAccountStatus;
+        }
+
+        return false
     }
 }

@@ -15,8 +15,6 @@ const ReduxInitial = () => {
             ])
             .then((values) => {
                 if (values.length > 0 && values[0]?.value) {
-                    console.log('Token values: ', values)
-
                     let valueParse;
 
                     if (values.length > 0 && values[0]?.value) {

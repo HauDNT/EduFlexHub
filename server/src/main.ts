@@ -9,6 +9,7 @@ import session from 'express-session';
 import passport from 'passport';
 import * as requestIp from 'request-ip';
 import cookieParser from 'cookie-parser';
+import {SeedService} from "@/database/seeds/seed.service";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);

@@ -25,16 +25,16 @@ import {LoginResponseInterface} from '@/interfaces/interfaces'
 import {setCookie} from '@/utils/cookieManage'
 
 const LoginForm: React.FC = () => {
-    const [ssoUnAuth, setSsoUnAuth] = useState('');
+    const [ssoUnAuth, setSsoUnAuth] = useState('')
+    const searchParams = useSearchParams()
     const {toast} = useToast()
     const dispatch = useDispatch()
     const router = useRouter()
-    const searchParams = useSearchParams();
 
     useEffect(() => {
-        const googleUnAuthParam = searchParams.get('google-unauth');
-        const githubUnAuthParam = searchParams.get('github-unauth');
-        const facebookUnAuthParam = searchParams.get('facebook-unauth');
+        const googleUnAuthParam = searchParams.get('google-unauth')
+        const githubUnAuthParam = searchParams.get('github-unauth')
+        const facebookUnAuthParam = searchParams.get('facebook-unauth')
 
         if (googleUnAuthParam) setSsoUnAuth('Google')
         else if (githubUnAuthParam) setSsoUnAuth('Github')
@@ -109,7 +109,7 @@ const LoginForm: React.FC = () => {
                             <FormItem>
                                 <FormLabel>Tài khoản</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="nva@email.com" {...field} />
+                                    <Input placeholder="Tên tài khoản của bạn" {...field} />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -125,6 +125,7 @@ const LoginForm: React.FC = () => {
                                     <Input
                                         {...field}
                                         type={'password'}
+                                        placeholder="Mật khẩu tài khoản của bạn"
                                     />
                                 </FormControl>
                                 <FormMessage/>
