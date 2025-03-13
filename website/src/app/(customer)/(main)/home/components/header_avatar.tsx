@@ -50,10 +50,6 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
 
         if (logoutResult.status === 200) {
             dispatch(removeReduxAuthToken());
-            toast({
-                title: "Đăng xuất thành công",
-            });
-
             router.push('/login')
         } else {
             toast({

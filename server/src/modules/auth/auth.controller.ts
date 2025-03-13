@@ -11,8 +11,8 @@ import {
     UseGuards
 } from '@nestjs/common';
 import {AuthService} from './auth.service';
-import {UserLoginDTO} from './dto/login-account.dto';
-import {UserLoginResponseDTO} from './dto/login-response.dto';
+import {UserLoginDTO} from './dto/user-login-account.dto';
+import {UserLoginResponseDTO} from './dto/user-login-response.dto';
 import {GoogleGuard} from '@/authentication/google_oauth2/google-guard';
 import {RegisterDTO} from "@/modules/auth/dto/register.dto";
 import {EmailDTO, ResetPasswordDTO} from "@/modules/auth/dto/forgot-password.dto";
@@ -23,6 +23,8 @@ import {OtpVerifyDTO} from "@/modules/auth/dto/otp-verify.dto";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
 import {IpAddress} from "@/decorators/IpAddress";
 import {LogoutDTO} from "@/modules/auth/dto/logout.dto";
+import {AdminLoginDTO} from "@/modules/auth/dto/admin-login-account.dto";
+import {AdminLoginResponseDTO} from "@/modules/auth/dto/admin-login-response.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -33,15 +35,26 @@ export class AuthController {
     ) {
     }
 
-    // Login in local
+    // Admin login
+    @Post('admin/login')
+    async adminLogin(
+        @IpAddress() ipAddress,
+        @Req() request: Request,
+        @Body() account: AdminLoginDTO,
+    ): Promise<AdminLoginResponseDTO> {
+        const userAgent = request.headers['user-agent'];
+        return this.authService.adminLogin(account, userAgent, ipAddress)
+    }
+
+    // Login in local - user
     @Post('login')
     async login(
         @IpAddress() ipAddress,
         @Req() request: Request,
         @Body() account: UserLoginDTO
-    ): Promise<UserLoginResponseDTO> {
+    ): Promise<UserLoginResponseDTO> { 
         const userAgent = request.headers['user-agent'];
-        return this.authService.loginAccount(account, userAgent, ipAddress);
+        return this.authService.userLogin(account, userAgent, ipAddress);
     }
 
     // Register account in local
@@ -159,6 +172,7 @@ export class AuthController {
                             userId: result.userId,
                             email: result.email,
                             accessToken: result.accessToken,
+                            role: result.role,
                         }),
                         {
                             httpOnly: true,

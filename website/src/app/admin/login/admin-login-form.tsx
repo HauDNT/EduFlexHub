@@ -47,7 +47,7 @@ const AdminLoginForm: React.FC = () => {
 
             const result = await axiosInstance
                 .post<LoginResponseInterface>(
-                    '/auth/login',
+                    '/auth/admin/login',
                     {...values}
                 )
                 .then(res => (
@@ -62,12 +62,14 @@ const AdminLoginForm: React.FC = () => {
                     userId: result.payload.userId,
                     username: result.payload.username,
                     accessToken: result.payload.accessToken,
+                    role: result.payload.role,
                 }))
 
                 dispatch(setReduxAuthToken({
                     userId: result.payload.userId,
                     username: result.payload.username,
                     accessToken: result.payload.accessToken,
+                    role: result.payload.role,
                 }))
 
                 router.push('/home')

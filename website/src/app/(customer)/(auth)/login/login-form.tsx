@@ -76,12 +76,14 @@ const LoginForm: React.FC = () => {
                     userId: result.payload.userId,
                     username: result.payload.username,
                     accessToken: result.payload.accessToken,
+                    role: result.payload.role,
                 }))
 
                 dispatch(setReduxAuthToken({
                     userId: result.payload.userId,
                     username: result.payload.username,
                     accessToken: result.payload.accessToken,
+                    role: result.payload.role,
                 }))
 
                 router.push('/home')

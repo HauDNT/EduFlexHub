@@ -3,7 +3,7 @@ import authReducer from './authSlice'
 
 export type RootState = {
     auth: {
-        user: { userid: string; username: string } | null
+        user: { userid: string; username: string, role: string } | null
         token: string | null
     };
 }

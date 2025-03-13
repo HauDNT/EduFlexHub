@@ -15,6 +15,7 @@ const authSlice = createSlice({
                 userId: action.payload.userId,
                 username: action.payload.username ?? undefined,
                 email: action.payload.email ?? undefined,
+                role: action.payload.role ?? 1,
             };
             state.token = action.payload.accessToken;
         },

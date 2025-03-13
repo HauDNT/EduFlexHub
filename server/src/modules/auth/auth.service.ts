@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common';
 import {User} from '../users/entities/user.entity';
 import {InjectRepository} from '@nestjs/typeorm';
-import {DataSource, Repository} from 'typeorm';
+import {DataSource, Equal, Repository} from 'typeorm';
 import {JwtService} from '@nestjs/jwt';
-import {UserLoginDTO} from './dto/login-account.dto';
-import {UserLoginResponseDTO} from './dto/login-response.dto';
+import {UserLoginDTO} from './dto/user-login-account.dto';
+import {UserLoginResponseDTO} from './dto/user-login-response.dto';
 import {UserLoginPayload} from '@/authentication/jwt/jwt-payload.type';
 import {SocialAccount} from "@/modules/social_accounts/entities/social_account.entity";
 import {ExceptionHandler} from "@nestjs/core/errors/exception-handler";
@@ -19,6 +19,9 @@ import {comparePassword, hashPassword} from "@/utils/bcrypt";
 import {RegisterResponseDTO} from "@/modules/auth/dto/register-response";
 import {Role} from "@/modules/roles/entities/role.entity";
 import {SessionsService} from "@/modules/sessions/sessions.service";
+import {AdminLoginDTO} from "@/modules/auth/dto/admin-login-account.dto";
+import {AdminLoginResponseDTO} from "@/modules/auth/dto/admin-login-response.dto";
+import {RoleEnum} from "@/database/enums/RoleEnum";
 
 @Injectable()
 export class AuthService {
@@ -35,11 +38,12 @@ export class AuthService {
     ) {
     };
 
-    // --------------------------------------------------- Local account ---------------------------------------------------
-    async loginAccount(account: UserLoginDTO, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
+    // --------------------------------------------------- User account in local ---------------------------------------------------
+    async userLogin(account: UserLoginDTO, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
         try {
-            const user = await this.userRepository.findOneBy({
-                username: account.username,
+            const user = await this.userRepository.findOne({
+                where: { username: account.username },
+                relations: ['role_id'],
             });
 
             if (!user) {
@@ -64,6 +68,7 @@ export class AuthService {
                 userId: user.id,
                 username: user.username,
                 accessToken: this.jwtService.sign(payload),
+                role: user.role_id.name
             };
         } catch (e) {
             console.log(`Lỗi đăng nhập: ${e.message}`)
@@ -168,8 +173,9 @@ export class AuthService {
 
         try {
             // Check account with email or username exists?
-            const existsUser = await this.userRepository.findOneBy({
-                email: parseUser.email
+            const existsUser = await this.userRepository.findOne({
+                where: {email: parseUser.email},
+                relations: ['role_id'], // Load thông tin role_id
             });
 
             if (existsUser !== null) {
@@ -191,11 +197,13 @@ export class AuthService {
                             userId: existsUser.id,
                             email: parseUser.email,
                             accessToken: this.jwtService.sign(payload),
+                            role: existsUser.role_id.name,
                         }
                     }
                 }
             } else {
                 if (option === 'register') {
+                    const accountRole = await this.roleRepository.findOneBy({ id: RoleEnum.Student })
                     const createSocialAccountInfo = await this.savedNewSocialAccountData(parseUser);
 
                     if (createSocialAccountInfo) {
@@ -209,6 +217,7 @@ export class AuthService {
                             userId: parseUser.id,
                             email: parseUser.email,
                             accessToken: this.jwtService.sign(payload),
+                            role: accountRole.name,
                         }
                     }
                 }
@@ -218,15 +227,16 @@ export class AuthService {
                 userId: null,
                 username: null,
                 accessToken: null,
+                role: null,
             }
         } catch (e) {
-            console.log('--> Xảy ra lỗi trong quá trình đăng nhập với tài khoản Google: ', e);
+            console.log('--> Xảy ra lỗi trong quá trình đăng nhập/ký với tài khoản Google: ', e);
 
             if (e instanceof HttpException) {
                 throw e;
             }
 
-            throw new InternalServerErrorException('Đã xảy ra lỗi ở phía server trong quá trình đăng ký tài khoản');
+            throw new InternalServerErrorException('Đã xảy ra lỗi ở phía server trong quá trình đăng nhập/ký với tài khoản Google');
         }
     }
 
@@ -237,6 +247,7 @@ export class AuthService {
         try {
             await queryRunner.connect();
             await queryRunner.startTransaction();
+            const role = await this.roleRepository.findOneBy({id: RoleEnum.Student})      // Mặc định tài khoản đăng nhập SSO là cho học viên
 
             if (parseJSONData) {
                 const saveUser: User = await queryRunner.manager.save(User, {
@@ -247,6 +258,7 @@ export class AuthService {
                     address: '',
                     phone_number: '',
                     address_device: '',
+                    role_id: role,
                 });
 
                 const saveSocialAccount: SocialAccount = await queryRunner.manager.save(SocialAccount, {
@@ -286,8 +298,8 @@ export class AuthService {
 
     async logout(userIdentifier: string, userAgent: string, ip: string): Promise<boolean> {
         const user = await this.userRepository.findOneBy([
-            { username: userIdentifier },
-            { email: userIdentifier },
+            {username: userIdentifier},
+            {email: userIdentifier},
         ]);
 
         const deleteSession = await this.sessionService.deleteSession(user, userAgent, ip);
@@ -304,5 +316,51 @@ export class AuthService {
         }
 
         return false
+    }
+
+    // -------------------------------------------------------- Admin account -------------------------------------------------------
+    async adminLogin(account: AdminLoginDTO, userAgent: any, ip: string): Promise<AdminLoginResponseDTO> {
+        try {
+            const role = await this.roleRepository.findOneBy({id: RoleEnum.Admin});
+            const user = await this.userRepository.findOne({
+                where: {
+                    username: account.username,
+                    role_id: role,
+                }
+            });
+
+            if (!user) {
+                throw new UnauthorizedException('Tài khoản không tồn tại')
+            }
+
+            // Tạo phiên đăng nhập mới
+            await this.sessionService.handleSessionsWhenLogin(user, userAgent, ip);
+
+            const isPasswordValid: boolean = await comparePassword(account.password, user.password);
+
+            if (!isPasswordValid) {
+                throw new UnauthorizedException('Mật khẩu không trùng khớp')
+            }
+
+            const payload: UserLoginPayload = {
+                userId: user.id,
+                username: user.username
+            };
+
+            return {
+                userId: user.id,
+                username: user.username,
+                accessToken: this.jwtService.sign(payload),
+                role: role.name,
+            };
+        } catch (e) {
+            console.log(`Lỗi đăng nhập quản trị: ${e.message}`)
+
+            if (e instanceof HttpException) {
+                throw e;
+            }
+
+            throw new InternalServerErrorException('Xảy ra lỗi từ phía server trong quá trình đăng nhập');
+        }
     }
 }

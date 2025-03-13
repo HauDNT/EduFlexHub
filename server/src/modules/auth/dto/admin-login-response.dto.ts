@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsNumber, IsString, IsEmail } from "class-validator";
 
-export class UserLoginResponseDTO {
+export class AdminLoginResponseDTO {
     @IsNumber()
     @IsNotEmpty()
-    userId: number | null;
+    userId: number;
 
     @IsString()
     @IsNotEmpty()
@@ -15,5 +15,9 @@ export class UserLoginResponseDTO {
 
     @IsString()
     @IsNotEmpty()
-    accessToken: string | null;
+    role: string;
+
+    @IsString()
+    @IsNotEmpty()
+    accessToken: string;
 }
