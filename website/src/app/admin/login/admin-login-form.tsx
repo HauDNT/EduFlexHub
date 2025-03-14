@@ -72,7 +72,7 @@ const AdminLoginForm: React.FC = () => {
                     role: result.payload.role,
                 }))
 
-                router.push('/home')
+                router.push('/admin/dashboard')
             }
         } catch (error) {
             const errorMessage = handleAxiosError(error);

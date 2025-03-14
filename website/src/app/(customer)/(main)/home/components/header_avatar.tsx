@@ -40,6 +40,7 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
 
     const handleLogout = async () => {
         const userIdentifier = user['username'] || user['email'];
+        const userRole = user['role'];
 
         const logoutResult = await axiosInstance.post(
             '/auth/logout',
@@ -50,7 +51,7 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
 
         if (logoutResult.status === 200) {
             dispatch(removeReduxAuthToken());
-            router.push('/login')
+            userRole === 'Admin' ? router.push('admin/login') : router.push('/login')
         } else {
             toast({
                 title: "Đăng xuất thất bại",

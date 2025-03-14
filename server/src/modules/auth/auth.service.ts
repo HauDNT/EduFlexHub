@@ -38,11 +38,23 @@ export class AuthService {
     ) {
     };
 
+    async updateAccountStatus(user: User, status: boolean = false): Promise<boolean> {
+        try {
+            user.is_online = status;
+            user.updated_at = new Date();
+            await this.userRepository.save(user);
+            return true;
+        } catch (error) {
+            console.error("Error updating user status:", error);
+            return false;
+        }
+    }
+
     // --------------------------------------------------- User account in local ---------------------------------------------------
     async userLogin(account: UserLoginDTO, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
         try {
             const user = await this.userRepository.findOne({
-                where: { username: account.username },
+                where: {username: account.username},
                 relations: ['role_id'],
             });
 
@@ -54,10 +66,11 @@ export class AuthService {
             await this.sessionService.handleSessionsWhenLogin(user, userAgent, ip);
 
             const isPasswordValid: boolean = await comparePassword(account.password, user.password);
-
             if (!isPasswordValid) {
                 throw new UnauthorizedException('Mật khẩu không trùng khớp')
             }
+
+            await this.updateAccountStatus(user, true);
 
             const payload: UserLoginPayload = {
                 userId: user.id,
@@ -187,6 +200,8 @@ export class AuthService {
 
                         await this.sessionService.handleSessionsWhenLogin(userInfo, userAgent, ip);
 
+                        await this.updateAccountStatus(existsUser, true);
+
                         const payload: UserLoginPayload = {
                             userId: existsUser.id,
                             email: parseUser.email,
@@ -203,7 +218,7 @@ export class AuthService {
                 }
             } else {
                 if (option === 'register') {
-                    const accountRole = await this.roleRepository.findOneBy({ id: RoleEnum.Student })
+                    const accountRole = await this.roleRepository.findOneBy({id: RoleEnum.Student})
                     const createSocialAccountInfo = await this.savedNewSocialAccountData(parseUser);
 
                     if (createSocialAccountInfo) {
@@ -305,14 +320,8 @@ export class AuthService {
         const deleteSession = await this.sessionService.deleteSession(user, userAgent, ip);
 
         if (deleteSession.affected >= 0) {
-            user.is_online = false;
-            const updateAccountStatus = await this.userRepository.save({
-                id: user.id,
-                is_online: false,
-                updated_at: new Date(),
-            })
-
-            return !!updateAccountStatus;
+            await this.updateAccountStatus(user, false);
+            return true;
         }
 
         return false
@@ -333,14 +342,16 @@ export class AuthService {
                 throw new UnauthorizedException('Tài khoản không tồn tại')
             }
 
-            // Tạo phiên đăng nhập mới
-            await this.sessionService.handleSessionsWhenLogin(user, userAgent, ip);
-
             const isPasswordValid: boolean = await comparePassword(account.password, user.password);
 
             if (!isPasswordValid) {
                 throw new UnauthorizedException('Mật khẩu không trùng khớp')
             }
+
+            // Tạo phiên đăng nhập mới
+            await this.sessionService.handleSessionsWhenLogin(user, userAgent, ip);
+
+            await this.updateAccountStatus(user, true);
 
             const payload: UserLoginPayload = {
                 userId: user.id,
