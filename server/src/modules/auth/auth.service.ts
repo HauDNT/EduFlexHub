@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import {User} from '../users/entities/user.entity';
 import {InjectRepository} from '@nestjs/typeorm';
-import {DataSource, Equal, Repository} from 'typeorm';
+import {DataSource, Equal, Not, Repository} from 'typeorm';
 import {JwtService} from '@nestjs/jwt';
 import {UserLoginDTO} from './dto/user-login-account.dto';
 import {UserLoginResponseDTO} from './dto/user-login-response.dto';
@@ -54,7 +54,10 @@ export class AuthService {
     async userLogin(account: UserLoginDTO, userAgent: string, ip: string): Promise<UserLoginResponseDTO> {
         try {
             const user = await this.userRepository.findOne({
-                where: {username: account.username},
+                where: {
+                    username: account.username,
+                    role_id: Not(RoleEnum.Admin)
+                },
                 relations: ['role_id'],
             });
 
