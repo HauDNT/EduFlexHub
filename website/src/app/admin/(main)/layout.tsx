@@ -1,7 +1,8 @@
-import AdminSidebar from "@/app/admin/(main)/components/AdminSidebar";
 import {ThemeProvider} from "@/context/ThemeContext";
 import React from "react";
 import ContentPage from "@/app/admin/(main)/content";
+import AppSidebar from "@/layout/AppSidebar";
+import {AdminSidebarItems} from "@/layout/AppSidebarItems";
 
 export default function AdminLayout({children}: Readonly<{ children: React.ReactNode }>) {
     return (
@@ -17,7 +18,7 @@ function AdminLayoutContent({children}: { children: React.ReactNode }) {
     return (
         <div className="min-h-screen xl:flex">
             {/* Sidebar */}
-            <AdminSidebar/>
+            <AppSidebar navItems={AdminSidebarItems}/>
             {/* Main Content Area */}
             <ContentPage>
                 { children }

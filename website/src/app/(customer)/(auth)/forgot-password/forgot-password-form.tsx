@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useState} from "react";
-import {StepResetForm} from "@/interfaces/interfaces";
+import {StepResetForm} from "@/interfaces";
 import {useForm, Controller} from "react-hook-form";
 import {Button} from "@/components/ui/button"
 import {

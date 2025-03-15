@@ -19,7 +19,7 @@ import {Input} from "@/components/ui/input"
 import {useToast} from "@/hooks/use-toast"
 import axiosInstance, {handleAxiosError} from "@/utils/axiosInstance"
 import {LoginBody, LoginBodyType} from '@/schemas/auth.schema'
-import {LoginResponseInterface} from '@/interfaces/interfaces'
+import {LoginResponseInterface} from '@/interfaces'
 import {setCookie} from '@/utils/cookieManage'
 
 const AdminLoginForm: React.FC = () => {

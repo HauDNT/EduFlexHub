@@ -1,3 +1,5 @@
+import {NavItem} from "@/types";
+
 export interface LoginResponseInterface {
     userId: string,
     username: string,
@@ -18,4 +20,8 @@ export interface StepResetForm {
     id: string | number,
     name: string,
     fieldsName: string[],
+}
+
+export interface AppSidebarProps {
+    navItems: NavItem[];
 }
