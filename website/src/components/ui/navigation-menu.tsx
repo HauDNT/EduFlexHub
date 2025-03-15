@@ -74,10 +74,10 @@ const NavigationMenuLink = NavigationMenuPrimitive.Link
 const NavigationMenuViewport = React.forwardRef<React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
     React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>>(({className, ...props}, ref) => (
     <div className={cn("absolute -left-2/3 top-full flex justify-center")}>
-        {/* overflow-x-hidden overflow-scroll custom-scrollbar overflow-y-auto hide-horizontal-scrollbar max-h-60 */}
+        {/* overflow-x-hidden overflow-scroll common-scrollbar overflow-y-auto hide-horizontal-scrollbar max-h-60 */}
         <NavigationMenuPrimitive.Viewport
             className={cn(
-                "origin-top-center max-h-60 overflow-scroll custom-scrollbar overflow-x-hidden relative mt-1.6 h-[var(--radix-navigation-menu-viewport-height)] w-full rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
+                "origin-top-center max-h-60 overflow-scroll common-scrollbar overflow-x-hidden relative mt-1.6 h-[var(--radix-navigation-menu-viewport-height)] w-full rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
                 className
             )}
             ref={ref}

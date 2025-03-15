@@ -3,6 +3,7 @@ import localFont from "next/font/local"
 import { Toaster } from "@/components/ui/toaster"
 import ReduxProvider from "@/redux/ReduxProvider";
 import "./globals.css";
+import React from "react";
 
 const webFont = localFont({
     src: '../assets/fonts/Roboto/Roboto-Regular.ttf',
