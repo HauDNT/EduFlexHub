@@ -18,7 +18,7 @@ function AdminLayoutContent({children}: { children: React.ReactNode }) {
     return (
         <div className="min-h-screen xl:flex">
             {/* Sidebar */}
-            {/*<AppSidebar navItems={AdminSidebarItems}/>*/}
+            <AppSidebar navItems={AdminSidebarItems}/>
             {/* Main Content Area */}
             <ContentPage>
                 { children }
