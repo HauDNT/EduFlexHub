@@ -1,4 +1,4 @@
-import {NavItem} from "@/types";
+import {NavItem, SidebarType} from "@/types";
 
 export interface LoginResponseInterface {
     userId: string,
@@ -24,4 +24,5 @@ export interface StepResetForm {
 
 export interface AppSidebarProps {
     navItems: NavItem[];
+    sidebarType?: SidebarType;
 }

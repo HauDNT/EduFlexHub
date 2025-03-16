@@ -1,11 +1,17 @@
 import React from 'react'
-import Header from "@/app/(customer)/(main)/home/components/header";
+import AppSidebar from "@/layout/AppSidebar";
+import {AdminSidebarItems} from "@/layout/AppSidebarItems";
+import ContentPage from "@/app/admin/(main)/content";
 
 export default function HomeLayout({children}: Readonly<{ children: React.ReactNode }>) {
     return (
-        <main>
-            <Header/>
-            {children}
-        </main>
+        <div className="min-h-screen xl:flex">
+            {/* Sidebar */}
+            <AppSidebar navItems={AdminSidebarItems} sidebarType={'admin'}/>
+            {/* Main Content Area */}
+            <ContentPage>
+                {children}
+            </ContentPage>
+        </div>
     )
 }

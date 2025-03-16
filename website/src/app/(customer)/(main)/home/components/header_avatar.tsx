@@ -51,7 +51,7 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
 
         if (logoutResult.status === 200) {
             dispatch(removeReduxAuthToken());
-            userRole === 'Admin' ? router.push('admin/login') : router.push('/login')
+            userRole === 'Admin' ? router.push('/admin/login') : router.push('/login')
         } else {
             toast({
                 title: "Đăng xuất thất bại",
@@ -69,7 +69,7 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
+            <DropdownMenuContent className="w-56 mt-1 mr-2 z-999999">
                 <DropdownMenuLabel>Tuỳ chọn</DropdownMenuLabel>
                 <DropdownMenuSeparator/>
                 <DropdownMenuGroup>
@@ -118,8 +118,8 @@ const HeaderAvatar = ({uri}: { uri?: string }) => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator/>
                 <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut/>
-                    <span>Đăng xuất</span>
+                    <LogOut color={'red'}/>
+                    <span className='text-error-600'>Đăng xuất</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

@@ -1,5 +1,7 @@
 import React from "react";
 
+export type SidebarType = 'Admin' | 'Student' | 'Teacher';
+
 export type NavItem = {
     name: string;
     icon: React.ReactNode;

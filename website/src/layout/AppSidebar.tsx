@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useRef, useState, useCallback} from "react";
+import React, {useEffect, useRef, useState, useCallback, useMemo} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {usePathname} from "next/navigation";
@@ -11,10 +11,10 @@ import AppSidebarWidget from "./AppSidebarWidget";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {setIsHovered} from "@/redux/sidebarSlice";
-import {AppSidebarProps} from "@/interfaces";
-import {NavItem} from "@/types";
+import {NavItem, SidebarType} from "@/types";
+import {AdminSidebarItems, UserSidebarItems} from "@/layout/AppSidebarItems";
 
-const AppSidebar: React.FC<AppSidebarProps> = ({navItems}) => {
+const AppSidebar: React.FC = () => {
     const pathname = usePathname();
     const dispatch = useDispatch();
     const {
@@ -22,6 +22,22 @@ const AppSidebar: React.FC<AppSidebarProps> = ({navItems}) => {
         isMobileOpen,
         isHovered,
     } = useSelector((state: RootState) => state.sidebar)
+
+    const roleState: SidebarType = useSelector((state: RootState) => {
+        return state.auth && state.auth.user ? state.auth.user.role : 'Student';
+    });
+
+    const navItems: NavItem[] = useMemo(() => {
+        switch (roleState) {
+            case 'Admin':
+                return AdminSidebarItems;
+            case 'Student':
+            case 'Teacher':
+                return UserSidebarItems;
+            default:
+                return [];
+        }
+    }, [roleState]);
 
     const renderMenuItems = (
         navItems: NavItem[],
@@ -288,7 +304,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({navItems}) => {
                         </div>
                     </div>
                 </nav>
-                {isExpanded || isHovered || isMobileOpen ? <AppSidebarWidget/> : null}
+                {
+                    isExpanded || isHovered || isMobileOpen ? (
+                        roleState !== 'Admin' && <AppSidebarWidget/>
+                    ) : null
+                }
             </div>
         </aside>
     );

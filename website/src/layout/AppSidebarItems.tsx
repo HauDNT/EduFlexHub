@@ -1,44 +1,41 @@
-import {
-    GridIcon,
-    CalenderIcon,
-    UserCircleIcon,
-    ListIcon,
-    TableIcon,
-    PageIcon,
-    PieChartIcon,
-    PlugInIcon,
-} from "@/assets/icons";
+import { FiGrid, FiBook, FiPieChart, FiCpu } from "react-icons/fi"
+import { FaUserCircle, FaUserShield } from "react-icons/fa"
+import { BiReceipt } from 'react-icons/bi'
 
 export const AdminSidebarItems = [
-    {icon: <GridIcon/>, name: "Dashboard", path: "/admin"},
-    {icon: <CalenderIcon/>, name: "Calendar", path: "/admin/calendar"},
-    {icon: <UserCircleIcon/>, name: "User Profile", path: "/admin/profile"},
+    {icon: <FiGrid size={25}/>, name: "Dashboard", path: "#"},
     {
-        name: "Forms",
-        icon: <ListIcon/>,
-        subItems: [{name: "Form Elements", path: "/admin/form-elements"}],
-    },
-    {
-        name: "Tables",
-        icon: <TableIcon/>,
-        subItems: [{name: "Basic Tables", path: "/admin/basic-tables"}],
-    },
-    {
-        name: "Pages",
-        icon: <PageIcon/>,
+        name: "Người dùng",
+        icon: <FaUserCircle size={25}/>,
         subItems: [
-            {name: "Blank Page", path: "/admin/blank"},
-            {name: "404 Error", path: "/admin/error-404"},
+            {name: "Quản trị", path: "#"},
+            {name: "Học viên", path: "#"},
+            {name: "Giảng viên", path: "#"},
         ],
+    },
+    {
+        name: "Phân quyền",
+        icon: <FaUserShield size={25}/>,
+        path: "#"
+    },
+    {
+        name: "Khoá học",
+        icon: <FiBook size={25}/>,
+        path: "#",
+    },
+    {
+        name: "Hoá đơn",
+        icon: <BiReceipt size={25}/>,
+        path: "#"
     },
 ];
 
 export const UserSidebarItems = [
-    {icon: <PieChartIcon/>, name: "Charts", path: "/product/charts"},
-    {icon: <PlugInIcon/>, name: "Plugins", path: "/product/plugins"},
+    {icon: <FiPieChart size={25}/>, name: "Charts", path: "/product/charts"},
+    {icon: <FiCpu size={25}/>, name: "Plugins", path: "/product/plugins"},
     {
         name: "UI Elements",
-        icon: <PlugInIcon/>,
+        icon: <FiCpu size={25}/>,
         subItems: [
             {name: "Alerts", path: "/product/alerts"},
             {name: "Avatar", path: "/product/avatars"},

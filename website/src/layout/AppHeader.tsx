@@ -7,6 +7,7 @@ import React, {useState, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {toggleMobileSidebar, toggleSidebar} from "@/redux/sidebarSlice";
+import HeaderAvatar from "@/app/(customer)/(main)/home/components/header_avatar";
 
 const AppHeader: React.FC = () => {
     const dispatch = useDispatch();
@@ -173,6 +174,9 @@ const AppHeader: React.FC = () => {
 
                         <NotificationDropdown/>
                         {/* <!-- Notification Menu Area --> */}
+
+                        {/* <!-- Avatar icon --> */}
+                        <HeaderAvatar/>
                     </div>
                 </div>
             </div>
