@@ -8,3 +8,5 @@ export type NavItem = {
     path?: string;
     subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
+
+export type Theme = "light" | "dark";

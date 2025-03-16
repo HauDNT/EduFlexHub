@@ -1,11 +1,10 @@
 "use client"
-import {Provider, useDispatch} from 'react-redux'
-import store from '@/redux/store'
-import React, {useEffect} from 'react'
+import React, {useEffect} from "react";
+import {useDispatch} from "react-redux";
 import {getCookie} from '@/utils/cookieManage'
 import {setReduxAuthToken} from '@/redux/authSlice'
 
-const ReduxInitial = () => {
+export const AuthReduxProvider: React.FC = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -30,14 +29,3 @@ const ReduxInitial = () => {
 
     return <></>
 }
-
-const ReduxProvider = ({children}: { children: React.ReactNode }) => {
-    return (
-        <Provider store={store}>
-            <ReduxInitial/>
-            {children}
-        </Provider>
-    )
-}
-
-export default ReduxProvider

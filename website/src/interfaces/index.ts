@@ -1,4 +1,4 @@
-import {NavItem, SidebarType} from "@/types";
+import {NavItem, SidebarType, Theme} from "@/types";
 
 export interface LoginResponseInterface {
     userId: string,
@@ -22,7 +22,7 @@ export interface StepResetForm {
     fieldsName: string[],
 }
 
-export interface AppSidebarProps {
-    navItems: NavItem[];
-    sidebarType?: SidebarType;
+export interface ThemeState {
+    theme: Theme;
+    isInitialized: boolean;
 }
