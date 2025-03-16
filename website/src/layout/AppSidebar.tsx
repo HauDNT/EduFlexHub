@@ -11,7 +11,7 @@ import AppSidebarWidget from "./AppSidebarWidget";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {setIsHovered} from "@/redux/sidebarSlice";
-import {AppSidebarProps} from "@/interfaces/interfaces";
+import {AppSidebarProps} from "@/interfaces";
 import {NavItem} from "@/types";
 
 const AppSidebar: React.FC<AppSidebarProps> = ({navItems}) => {
@@ -175,7 +175,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({navItems}) => {
                         nav.subItems.forEach((subItem) => {
                             if (isActive(subItem.path)) {
                                 setOpenSubmenu({
-                                    type: menuType as "main" | "others",
+                                    type: menuType as "main",
+                                    // type: menuType as "main" | "others",
                                     index,
                                 });
                                 submenuMatched = true;

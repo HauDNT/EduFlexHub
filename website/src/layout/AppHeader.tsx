@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {toggleMobileSidebar, toggleSidebar} from "@/redux/sidebarSlice";
 
-const AdminHeader: React.FC = () => {
+const AppHeader: React.FC = () => {
     const dispatch = useDispatch();
     const {
         isMobileOpen,
@@ -42,7 +42,7 @@ const AdminHeader: React.FC = () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, []);
- 
+
     return (
         <header
             className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
@@ -180,4 +180,4 @@ const AdminHeader: React.FC = () => {
     );
 };
 
-export default AdminHeader;
+export default AppHeader;
