@@ -10,3 +10,11 @@ export type NavItem = {
 };
 
 export type Theme = "light" | "dark";
+
+export type DashboardCardItem = {
+    name: string;
+    number: number;
+    icon: React.ReactNode;
+    upOrDown: boolean;
+    diffRatio: number;
+}

@@ -3,7 +3,7 @@ import { FaUserCircle, FaUserShield } from "react-icons/fa"
 import { BiReceipt } from 'react-icons/bi'
 
 export const AdminSidebarItems = [
-    {icon: <FiGrid size={25}/>, name: "Dashboard", path: "#"},
+    {icon: <FiGrid size={25}/>, name: "Dashboard", path: "/admin/dashboard"},
     {
         name: "Người dùng",
         icon: <FaUserCircle size={25}/>,

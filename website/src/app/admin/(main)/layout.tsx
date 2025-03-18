@@ -5,7 +5,7 @@ import AppSidebar from "@/layout/AppSidebar";
 export default function AdminLayout({children}: Readonly<{ children: React.ReactNode }>) {
     return (
         <main>
-            <div className="min-h-screen xl:flex">
+            <div className="min-h-screen xl:flex bg-white dark:bg-gray-900">
                 {/* Sidebar */}
                 <AppSidebar/>
                 {/* Main Content Area */}

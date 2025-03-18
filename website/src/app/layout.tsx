@@ -20,7 +20,7 @@ export default function RootLayout({children,}: Readonly<{
 }>) {
     return (
         <html lang="en">
-            <body className={webFont.className}>
+            <body className={`${webFont.className} dark:bg-gray-900`}>
                 <RootReduxProvider>
                     {children}
                 </RootReduxProvider>

@@ -1,5 +1,5 @@
 export default function HomePage() {
     return (
-        <>Home</>
+        <>Home User Page</>
     )
 }
