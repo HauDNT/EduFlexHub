@@ -6,7 +6,6 @@ import {
     Post, Query,
     Req,
     Res,
-    Ip,
     UnauthorizedException,
     UseGuards
 } from '@nestjs/common';

@@ -27,6 +27,7 @@ import {useToast} from "@/hooks/use-toast"
 import axiosInstance, {handleAxiosError} from "@/utils/axiosInstance"
 import {RegisterBody, RegisterBodyType} from '@/schemas/auth.schema'
 import {FaFacebook, FaGithub, FaGoogle} from "react-icons/fa";
+import {RoleEnum} from "@/enums";
 
 const RegisterForm: React.FC = () => {
     const [ssoRegistered, setSsoRegistered] = useState('');
@@ -153,8 +154,12 @@ const RegisterForm: React.FC = () => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="2">Học viên</SelectItem>
-                                    <SelectItem value="3">Giảng viên</SelectItem>
+                                    <SelectItem value={'' + RoleEnum.Student}>Học viên</SelectItem>
+                                    <SelectItem value={'' + RoleEnum.Teacher}>Giảng viên</SelectItem>
+
+                                    {/* Tạm thời để lận test */}
+                                    <SelectItem value={'' + RoleEnum.Staff}>Nhân viên</SelectItem>
+                                    <SelectItem value={'' + RoleEnum.Admin}>Admin</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage/>

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import {User} from '../users/entities/user.entity';
 import {InjectRepository} from '@nestjs/typeorm';
-import {DataSource, Equal, Not, Repository} from 'typeorm';
+import {DataSource, Not, Repository} from 'typeorm';
 import {JwtService} from '@nestjs/jwt';
 import {UserLoginDTO} from './dto/user-login-account.dto';
 import {UserLoginResponseDTO} from './dto/user-login-response.dto';
@@ -122,6 +122,7 @@ export class AuthService {
             const hash_password = await hashPassword(password)
 
             const role = await this.roleRepository.findOneBy({id: +account_type});
+            
             if (!role) {
                 throw new BadRequestException('Loại tài khoản không hợp lệ');
             }

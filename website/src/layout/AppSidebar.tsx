@@ -13,6 +13,7 @@ import {RootState} from "@/redux/store";
 import {setIsHovered} from "@/redux/sidebarSlice";
 import {NavItem, SidebarType} from "@/types";
 import {AdminSidebarItems, UserSidebarItems} from "@/layout/AppSidebarItems";
+import {RoleEnum} from "@/enums";
 
 const AppSidebar: React.FC = () => {
     const pathname = usePathname();
@@ -24,17 +25,19 @@ const AppSidebar: React.FC = () => {
     } = useSelector((state: RootState) => state.sidebar)
 
     const roleState: SidebarType = useSelector((state: RootState) => {
-        return state.auth && state.auth.user ? state.auth.user.role : 'Student';
+        const role = state.auth && state.auth.user ? state.auth.user.role : "Student";
+        return Object.values(RoleEnum).includes(role) ? role : "Student";
     });
 
     const navItems: NavItem[] = useMemo(() => {
         switch (roleState) {
-            case 'Admin':
+            case "Admin":
                 return AdminSidebarItems;
-            case 'Student':
-            case 'Teacher':
+            case "Student":
+            case "Teacher":
                 return UserSidebarItems;
             default:
+                console.warn(`Unknown role: ${roleState}`); // Thêm log để debug
                 return [];
         }
     }, [roleState]);

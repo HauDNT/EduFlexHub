@@ -1,10 +1,10 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn} from "typeorm";
 import { User } from "@/modules/users/entities/user.entity";
 import { Action } from "@/modules/actions/entities/action.entity";
 
 @Entity({ name: 'roles' })
 export class Role {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
 
     @Column()

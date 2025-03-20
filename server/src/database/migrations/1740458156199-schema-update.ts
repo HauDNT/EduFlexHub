@@ -99,5 +99,4 @@ export class SchemaUpdate1740458156199 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE \`carts\``);
         await queryRunner.query(`DROP TABLE \`cart_details\``);
     }
-
 }
