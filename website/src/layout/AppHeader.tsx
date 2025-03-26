@@ -7,7 +7,7 @@ import React, {useState, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {toggleMobileSidebar, toggleSidebar} from "@/redux/sidebarSlice";
-import HeaderAvatar from "@/app/(customer)/(main)/home/components/header_avatar";
+import HeaderAvatar from "@/components/headers/HeaderAvatar";
 
 const AppHeader: React.FC = () => {
     const dispatch = useDispatch();
