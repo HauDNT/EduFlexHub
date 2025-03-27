@@ -4,6 +4,11 @@ import React, {ReactNode} from "react";
 export interface TableProps {
     children: ReactNode; // Table content (thead, tbody, etc.)
     className?: string; // Optional className for styling
+    tableTitle?: string;
+    createItem?: boolean;
+    detailItem?: boolean;
+    deleteItem?: boolean;
+    restoreItem?: boolean;
 }
 
 // Props for TableHeader
@@ -35,8 +40,6 @@ export interface TableCellProps {
 
 // Table Props
 export interface CustomTableProps extends TableProps {
-    // columns: { key: string; label: string; sortable?: boolean }[]; // Định nghĩa các cột
-    // data: any[]; // Dữ liệu của bảng
     tableData: CustomTableData;
     onSort?: (key: string) => void; // Hàm xử lý sắp xếp
 }

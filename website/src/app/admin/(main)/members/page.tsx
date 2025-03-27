@@ -4,7 +4,6 @@ import {useSearchParams} from 'next/navigation';
 import {useToast} from "@/hooks/use-toast";
 import axiosInstance from "@/utils/axiosInstance";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import ComponentCard from "@/components/common/ComponentCard";
 import CustomTable from "@/components/common/CustomTable";
 
 export default function MemberManagement() {
@@ -35,12 +34,13 @@ export default function MemberManagement() {
             {
                 data?.columns && (
                     <div className="space-y-6">
-                        <ComponentCard title={'Danh sách tài khoản'}>
-                            <CustomTable
-                                tableData={data}
-                                onSort={(key) => console.log(`Sorting by ${key}`)}
-                            />
-                        </ComponentCard>
+                        <CustomTable
+                            tableTitle={'Danh sách tài khoản'}
+                            tableData={data}
+                            onSort={(key) => console.log(`Sorting by ${key}`)}
+                            createItem={true}
+                            deleteItem={true}
+                        />
                     </div>
                 )
             }
