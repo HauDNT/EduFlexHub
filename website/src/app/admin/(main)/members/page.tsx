@@ -6,7 +6,6 @@ import axiosInstance from "@/utils/axiosInstance";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ComponentCard from "@/components/common/ComponentCard";
 import CustomTable from "@/components/common/CustomTable";
-import {ValidCustomTableColumns, ValidCustomTableData} from "@/utils/validCustomTableData";
 
 export default function MemberManagement() {
     const searchParams = useSearchParams()
@@ -33,15 +32,18 @@ export default function MemberManagement() {
     return (
         <div>
             <PageBreadcrumb pageTitle={type.charAt(0).toUpperCase() + type.slice(1)}/>
-            <div className="space-y-6">
-                <ComponentCard title={'Danh sách tài khoản'}>
-                    <CustomTable
-                        columns={ValidCustomTableColumns(data)}
-                        data={ValidCustomTableData(data)}
-                        onSort={(key) => console.log(`Sorting by ${key}`)}
-                    />
-                </ComponentCard>
-            </div>
+            {
+                data?.columns && (
+                    <div className="space-y-6">
+                        <ComponentCard title={'Danh sách tài khoản'}>
+                            <CustomTable
+                                tableData={data}
+                                onSort={(key) => console.log(`Sorting by ${key}`)}
+                            />
+                        </ComponentCard>
+                    </div>
+                )
+            }
         </div>
     )
 }

@@ -33,21 +33,22 @@ export interface TableCellProps {
     onClick?: void;
 }
 
-// // Column and data
-// interface TableColumn {
-//     key: string;
-//     title: string;
-//     sortable?: boolean;
-//     filterable?: boolean;
-// }
-//
-// interface TableRowData {
-//     [key: string]: any;
-// }
-
 // Table Props
 export interface CustomTableProps extends TableProps {
-    columns: { key: string; label: string; sortable?: boolean }[]; // Định nghĩa các cột
-    data: any[]; // Dữ liệu của bảng
+    // columns: { key: string; label: string; sortable?: boolean }[]; // Định nghĩa các cột
+    // data: any[]; // Dữ liệu của bảng
+    tableData: CustomTableData;
     onSort?: (key: string) => void; // Hàm xử lý sắp xếp
+}
+
+export interface CustomTableColumn {
+    key: string;
+    displayName: string;
+    type: 'string' | 'number' | 'boolean' | 'date';
+    valueMapping?: Record<string, any>
+}
+
+export interface CustomTableData {
+    columns: CustomTableColumn[];
+    values: Record<string, any>[];
 }

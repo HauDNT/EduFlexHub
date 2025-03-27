@@ -6,6 +6,7 @@ import {ResetPasswordDTO} from "@/modules/auth/dto/forgot-password.dto";
 import {hashPassword} from "@/utils/bcrypt";
 import {RoleEnum} from "@/database/enums/RoleEnum";
 import {Role} from "@/modules/roles/entities/role.entity";
+import {TableMetaData} from "@/interfaces/table";
 
 @Injectable()
 export class UsersService {
@@ -55,7 +56,7 @@ export class UsersService {
         }
     }
 
-    async getAllMembersByTypeQuery(type: string): Promise<User[]> {
+    async getAllMembersByTypeQuery(type: string): Promise<TableMetaData<User>> {
         let roleNumber = 0
 
         switch (type) {
@@ -77,10 +78,37 @@ export class UsersService {
             {id: roleNumber}
         )
 
-        return await this.userRepository.find({
-            where: { role_id: role },
+        const users = await this.userRepository.find({
+            where: {role_id: role},
             select: ['id', 'username', 'fullname', 'email', 'gender', 'is_online', 'is_active'],
+        })
+
+        return {
+            "columns": [
+                {"key": "id", "displayName": "ID", "type": "number"},
+                {"key": "username", "displayName": "Tên người dùng", "type": "string"},
+                {"key": "email", "displayName": "Email", "type": "string"},
+                {
+                    "key": "gender",
+                    "displayName": "Giới tính",
+                    "type": "number",
+                    "valueMapping": {
+                        1: "Nam",
+                        2: "Nữ",
+                        3: "Không xác định"
+                    },
+                },
+                {
+                    "key": "is_online",
+                    "displayName": "Trạng thái online",
+                    "type": "boolean",
+                    "valueMapping": {
+                        "true": "Đang online",
+                        "false": "Offline"
+                    },
+                },
+            ],
+            "values": users
         }
-        )
     }
 }

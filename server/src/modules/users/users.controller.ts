@@ -1,6 +1,7 @@
 import {BadRequestException, Controller, Get, Query} from '@nestjs/common';
 import {UsersService} from './users.service';
 import {User} from "@/modules/users/entities/user.entity";
+import {TableMetaData} from "@/interfaces/table";
 
 @Controller('users')
 export class UsersController {
@@ -9,7 +10,7 @@ export class UsersController {
     ) {}
 
     @Get()
-    async getByType(@Query('type') type: string): Promise<User[]> {
+    async getByType(@Query('type') type: string): Promise<TableMetaData<User>> {
         if (type !== 'admin' && type !== 'staff' && type !== 'student' && type !== 'teacher') {
             throw new BadRequestException({
                 message: 'Loại tài khoản không hợp lệ',
