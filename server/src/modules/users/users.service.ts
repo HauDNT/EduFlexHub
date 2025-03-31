@@ -1,12 +1,13 @@
 import {HttpException, Injectable, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {User} from './entities/user.entity';
-import {Repository} from 'typeorm';
+import {In, Repository, UpdateResult, IsNull} from 'typeorm';
 import {ResetPasswordDTO} from "@/modules/auth/dto/forgot-password.dto";
 import {hashPassword} from "@/utils/bcrypt";
 import {RoleEnum} from "@/database/enums/RoleEnum";
 import {Role} from "@/modules/roles/entities/role.entity";
 import {TableMetaData} from "@/interfaces/table";
+import {PaginationQueryDTO} from "@/utils/PaginationQueryDTO";
 
 @Injectable()
 export class UsersService {
@@ -56,8 +57,9 @@ export class UsersService {
         }
     }
 
-    async getAllMembersByTypeQuery(type: string): Promise<TableMetaData<User>> {
+    async getAllMembersByTypeQuery(type: string, pagination: PaginationQueryDTO): Promise<TableMetaData<User>> {
         let roleNumber = 0
+        const { page, limit } = pagination;
 
         switch (type) {
             case 'admin':
@@ -78,10 +80,24 @@ export class UsersService {
             {id: roleNumber}
         )
 
-        const users = await this.userRepository.find({
-            where: {role_id: role},
+        // Tính skip và take
+        /*
+            page = 1 => skip = 0
+            page = 2 => skip = limit
+            page = 3 => skip = 2 * limit
+         */
+        const skip = (page - 1) * limit
+        const take = limit
+
+        const [users, total] = await this.userRepository.findAndCount({
+            where: { role_id: role, deleted_at: IsNull() },
             select: ['id', 'username', 'fullname', 'email', 'gender', 'is_online', 'is_active'],
+            skip,
+            take,
         })
+
+        // Tính tổng số trang
+        const totalPages = Math.ceil(total / limit);
 
         return {
             "columns": [
@@ -108,7 +124,30 @@ export class UsersService {
                     },
                 },
             ],
-            "values": users
+            "values": users,
+            "meta": {
+                "totalItems": total,
+                "currentPage": page,
+                "totalPages": totalPages,
+                "limit": limit,
+            }
+        }
+    }
+
+    async softDeleteUsers(userItemIds: string[]): Promise<UpdateResult> {
+        try {
+            return this.userRepository.update(
+                { id: In(userItemIds) },
+                { is_online: false, deleted_at: new Date() },
+            )
+        } catch (e) {
+            console.log('Error when soft delete users: ', e.message);
+
+            if (e instanceof HttpException) {
+                throw e;
+            }
+
+            throw new InternalServerErrorException('Xảy ra lỗi từ phía server trong quá trình xoá người dùng');
         }
     }
 }

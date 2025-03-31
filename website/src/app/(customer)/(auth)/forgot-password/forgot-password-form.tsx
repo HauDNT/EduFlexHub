@@ -3,7 +3,7 @@
 import React, {useState} from "react";
 import {StepResetForm} from "@/interfaces";
 import {useForm, Controller} from "react-hook-form";
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button_normal"
 import {
     Form,
     FormControl,

@@ -5,7 +5,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import {useRouter} from "next/navigation"
 import {useDispatch} from 'react-redux'
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button_normal"
 import {
     Form,
     FormControl,

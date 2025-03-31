@@ -136,6 +136,7 @@ export class AuthService {
                 phone_number: '',
                 address_device: '',
                 role_id: role,
+                created_at: new Date(),
             });
 
             await queryRunner.commitTransaction();
@@ -278,6 +279,7 @@ export class AuthService {
                     phone_number: '',
                     address_device: '',
                     role_id: role,
+                    created_at: new Date(),
                 });
 
                 const saveSocialAccount: SocialAccount = await queryRunner.manager.save(SocialAccount, {

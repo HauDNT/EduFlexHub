@@ -4,7 +4,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import Link from "next/link";
 import {HttpStatusCode} from "axios";
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button_normal"
 import {
     Form,
     FormControl,

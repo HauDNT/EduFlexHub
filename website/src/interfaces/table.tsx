@@ -9,6 +9,9 @@ export interface TableProps {
     detailItem?: boolean;
     deleteItem?: boolean;
     restoreItem?: boolean;
+    handleCreate?: void;
+    handleDelete?: void;
+    handleRestore?: void;
 }
 
 // Props for TableHeader

@@ -8,4 +8,5 @@ export interface TableColumn {
 export interface TableMetaData<T> {
     columns: TableColumn[];
     values: T[];
+    meta?: any;
 }

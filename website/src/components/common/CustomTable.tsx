@@ -12,6 +12,7 @@ import {renderCellValues} from "@/utils/customTableUtils";
 import ComponentCard from "@/components/common/ComponentCard";
 import ActionButton from "@/components/common/ActionButton";
 import {Checkbox} from "@/components/ui/checkbox"
+import {useSearchParams} from "next/navigation";
 
 export default function CustomTable({
     tableTitle,
@@ -21,6 +22,9 @@ export default function CustomTable({
     createItem,
     deleteItem,
     restoreItem,
+    handleCreate,
+    handleDelete,
+    handleRestore,
 }: CustomTableProps) {
     const {columns, values} = tableData;
     const [itemSelected, setItemSelect] = useState<number[]>([]);
@@ -36,30 +40,38 @@ export default function CustomTable({
         } else {
             setItemSelect((prev) => prev.filter((id) => id !== itemId));
         }
-
-        console.log(itemSelected.length)
     };
 
     return (
         <ComponentCard
             title={tableTitle}
             actionBar={
-                (createItem || deleteItem || restoreItem) && (
-                    <div className='flex justify-between w-full gap-4'>
-                        <ActionButton
-                            action={"Create"}
-                            handleAction={() => console.log('Create')}
-                        />
-                        <ActionButton
-                            action={"Delete"}
-                            handleAction={() => console.log('Delete')}
-                        />
-                        <ActionButton
-                            action={"Restore"}
-                            handleAction={() => console.log('Restore')}
-                        />
-                    </div>
-                )
+                <div className='flex justify-between w-full gap-4'>
+                    {
+                        createItem && (
+                            <ActionButton
+                                action={"Create"}
+                                handleAction={handleCreate}
+                            />
+                        )
+                    }
+                    {
+                        deleteItem && (
+                            <ActionButton
+                                action={"Delete"}
+                                handleAction={async () => handleDelete(itemSelected)}
+                            />
+                        )
+                    }
+                    {
+                        restoreItem && (
+                            <ActionButton
+                                action={"Restore"}
+                                handleAction={handleRestore}
+                            />
+                        )
+                    }
+                </div>
             }
         >
             <div
@@ -103,17 +115,21 @@ export default function CustomTable({
                                     <TableRow key={index}>
                                         {
                                             (deleteItem || restoreItem) && (
-                                                <TableCell
-                                                    key={index}
-                                                    onClick={() => {}}
-                                                    className="px-5 py-3 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
-                                                >
-                                                    <Checkbox
-                                                        className={'table-select-item'}
-                                                        checked={itemSelected.includes(row.id)}
-                                                        onCheckedChange={(checked) => handleItemChecked(row.id, checked as boolean)}
-                                                    />
-                                                </TableCell>
+                                                row.disableCheck ? (
+                                                    <span/>
+                                                ) : (
+                                                    <TableCell
+                                                        key={index}
+                                                        onClick={() => {}}
+                                                        className="px-5 py-3 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
+                                                    >
+                                                        <Checkbox
+                                                            className={'table-select-item'}
+                                                            checked={itemSelected.includes(row.id)}
+                                                            onCheckedChange={(checked) => handleItemChecked(row.id, checked as boolean)}
+                                                        />
+                                                    </TableCell>
+                                                )
                                             )
                                         }
                                         {
@@ -122,7 +138,7 @@ export default function CustomTable({
                                                     <TableCell key={col.key} className="px-5 py-4 sm:px-6 text-center">
                                                         <div className="flex items-center gap-3">
                                                             <div className={'w-full'}>
-                                                                <span className="block text-gray-500 text-center text-theme-sm">
+                                                                <span className="block text-gray-600 text-center text-theme-sm">
                                                                 {
                                                                     col.key === 'is_online' ?
                                                                         (

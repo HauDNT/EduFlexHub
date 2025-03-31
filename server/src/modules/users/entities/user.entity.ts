@@ -60,6 +60,9 @@ export class User {
     @Column({ type: 'timestamp', nullable: true })
     updated_at: Date | null;
 
+    @Column({ type: 'timestamp', nullable: true })
+    deleted_at: Date | null;
+
     // role
     @ManyToOne(() => Role, role => role.users)
     @JoinColumn({ name: 'role_id' })

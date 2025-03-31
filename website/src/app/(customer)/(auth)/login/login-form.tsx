@@ -7,7 +7,7 @@ import Link from "next/link"
 import {useRouter, useSearchParams} from "next/navigation"
 import {useDispatch} from 'react-redux'
 import {FaGithub, FaGoogle, FaFacebook} from 'react-icons/fa'
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button_normal"
 import {
     Form,
     FormControl,
