@@ -7,7 +7,7 @@ import Link from "next/link"
 import {useRouter, useSearchParams} from "next/navigation"
 import {useDispatch} from 'react-redux'
 import {FaGithub, FaGoogle, FaFacebook} from 'react-icons/fa'
-import {Button} from "@/components/ui/button_normal"
+import CustomButton from "@/components/buttons/CustomButton"
 import {
     Form,
     FormControl,
@@ -134,7 +134,7 @@ const LoginForm: React.FC = () => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className='!mt-6 w-full'>Đăng nhập</Button>
+                    <CustomButton type="submit" className='!mt-6 w-full'>Đăng nhập</CustomButton>
 
                     <div className='flex justify-between !my-4'>
                         <div>

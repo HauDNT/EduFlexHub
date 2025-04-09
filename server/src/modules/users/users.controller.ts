@@ -1,9 +1,10 @@
-import {BadRequestException, Body, Controller, Delete, Get, Query} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Delete, Get, Post, Query} from '@nestjs/common';
 import {UsersService} from './users.service';
 import {User} from "@/modules/users/entities/user.entity";
 import {TableMetaData} from "@/interfaces/table";
 import {DeleteUsersDTO} from "@/modules/users/dto";
 import {UpdateResult} from "typeorm";
+import {RegisterDTO} from "@/modules/auth/dto/register.dto";
 
 @Controller('users')
 export class UsersController {
@@ -26,7 +27,7 @@ export class UsersController {
 
         return await this.usersService.getAllMembersByTypeQuery(type, { page, limit })
     }
-
+    
     @Delete('/delete-users')
     async deleteUsers(
         @Body() data: DeleteUsersDTO

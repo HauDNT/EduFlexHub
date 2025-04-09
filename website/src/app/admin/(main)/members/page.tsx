@@ -2,20 +2,27 @@
 import React, {useEffect, useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {useToast} from "@/hooks/use-toast";
-import axiosInstance from "@/utils/axiosInstance";
+import {HttpStatusCode} from "axios";
+import axiosInstance, {handleAxiosError} from "@/utils/axiosInstance";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import CustomTable from "@/components/common/CustomTable";
+import CustomTable from "@/components/table/CustomTable";
 import {useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import CustomPagination from "@/components/common/CustomPagination";
+import CreateNewAccountForm from "@/components/forms/CreateNewAccountForm";
+import ModelLayer from "@/components/common/ModelLayer";
+import {RegisterBodyType} from "@/schemas/auth.schema";
 
 export default function MemberManagement() {
+    const {toast} = useToast()
     const searchParams = useSearchParams()
     const type = searchParams.get('type')
     const {user} = useSelector((state: RootState) => state.auth)
     const [data, setData] = useState([])
     const [meta, setMeta] = useState({totalPages: 1, currentPage: 1, limit: 2})
-    const {toast} = useToast()
+    const [createFormState, setCreateFormState] = useState(false)
+
+    const toggleCreateFormState = () => setCreateFormState(prev => !prev)
 
     const fetchUsersByType = async (type: string) => {
         try {
@@ -108,6 +115,46 @@ export default function MemberManagement() {
         }
     }
 
+    const handleCreateUserForm = async (values: RegisterBodyType) => {
+        try {
+            if (!values) {
+                toast({
+                    title: "Vui lòng điền đẩy đủ thông tin",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            if (values.re_password !== values.password) {
+                toast({
+                    title: "Đăng ký thất bại",
+                    description: "Mật khẩu không trùng khớp",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            const result = await axiosInstance.post<any>('/auth/register', {...values});
+
+            if (result.status === HttpStatusCode.Created) {
+                toast({
+                    title: "Tạo tài khoản thành công",
+                    variant: "success",
+                });
+
+                setCreateFormState(false)
+            }
+        } catch (error) {
+            const errorMessage = handleAxiosError(error);
+
+            toast({
+                title: "Đăng ký thất bại",
+                description: errorMessage,
+                variant: "destructive",
+            });
+        }
+    }
+
     useEffect(() => {
         if (user && user['userId']) {
             fetchUsersByType(type);
@@ -128,7 +175,7 @@ export default function MemberManagement() {
                             onSort={(key) => console.log(`Sorting by ${key}`)}
                             createItem={true}
                             deleteItem={true}
-                            handleCreate={() => console.log('Create')}
+                            handleCreate={toggleCreateFormState}
                             handleDelete={(itemSelected) => handleDeleteUsers(itemSelected)}
                         />
                     </div>
@@ -145,6 +192,16 @@ export default function MemberManagement() {
                     currentPage: page
                 }))}
             />
+
+            <ModelLayer
+                isOpen={createFormState}
+                onClose={() => setCreateFormState(false)}
+                maxWidth="max-w-3xl"
+            >
+                <CreateNewAccountForm
+                    onSubmit={(values: RegisterBodyType) => handleCreateUserForm(values)}
+                />
+            </ModelLayer>
         </div>
     )
 }

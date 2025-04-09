@@ -1,4 +1,5 @@
 import { Theme} from "@/types";
+import React from "react";
 
 // Authen
 export interface LoginResponseInterface {
@@ -18,7 +19,7 @@ export interface ReduxAuthState {
     token: string | null,
 }
 
-// Reset password form steps
+// Reset password forms steps
 export interface StepResetForm {
     id: string | number,
     name: string,
@@ -29,4 +30,20 @@ export interface StepResetForm {
 export interface ThemeState {
     theme: Theme;
     isInitialized: boolean;
+}
+
+// Form
+export interface FormInterface {
+    onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    className?: string;
+    onClose: () => void;
+}
+
+// Model layer
+export interface ModelLayerInterface {
+    isOpen: boolean;
+    onClose: () => void;
+    children: React.ReactNode;
+    className?: string;
+    maxWidth?: string;
 }

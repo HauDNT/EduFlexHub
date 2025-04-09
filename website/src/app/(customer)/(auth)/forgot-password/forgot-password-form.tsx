@@ -3,7 +3,7 @@
 import React, {useState} from "react";
 import {StepResetForm} from "@/interfaces";
 import {useForm, Controller} from "react-hook-form";
-import {Button} from "@/components/ui/button_normal"
+import CustomButton from "@/components/buttons/CustomButton"
 import {
     Form,
     FormControl,
@@ -230,7 +230,7 @@ const ForgotPasswordForm: React.FC = () => {
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className='!mt-6 w-full'>Xác nhận</Button>
+                                <CustomButton type="submit" className='!mt-6 w-full'>Xác nhận</CustomButton>
                             </form>
                         </Form>
                     )
@@ -271,10 +271,10 @@ const ForgotPasswordForm: React.FC = () => {
                                         </div>
                                     )}
                                 />
-                                <Button
+                                <CustomButton
                                     type="submit"
                                     className='!mt-6 w-full'
-                                    disabled={!verifyCodeForm.formState.isValid}>Xác nhận</Button>
+                                    disabled={!verifyCodeForm.formState.isValid}>Xác nhận</CustomButton>
                             </form>
                         </Form>
                     )
@@ -309,7 +309,7 @@ const ForgotPasswordForm: React.FC = () => {
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className='!mt-6 w-full'>Xác nhận</Button>
+                                <CustomButton type="submit" className='!mt-6 w-full'>Xác nhận</CustomButton>
                             </form>
                         </Form>
                     )

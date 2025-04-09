@@ -4,7 +4,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import Link from "next/link";
 import {HttpStatusCode} from "axios";
-import {Button} from "@/components/ui/button_normal"
+import CustomButton from "@/components/buttons/CustomButton"
 import {
     Form,
     FormControl,
@@ -166,7 +166,7 @@ const RegisterForm: React.FC = () => {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className='!mt-6 w-full'>Đăng ký</Button>
+                <CustomButton type="submit" className='!mt-6 w-full'>Đăng ký</CustomButton>
 
                 <Link href='/login' className='flex justify-center items-center !mt-4'>
                     <IoIosArrowBack size={20}/>

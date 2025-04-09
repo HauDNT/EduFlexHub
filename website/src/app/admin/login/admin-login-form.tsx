@@ -5,7 +5,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import {useRouter} from "next/navigation"
 import {useDispatch} from 'react-redux'
-import {Button} from "@/components/ui/button_normal"
+import CustomButton from "@/components/buttons/CustomButton"
 import {
     Form,
     FormControl,
@@ -130,7 +130,7 @@ const AdminLoginForm: React.FC = () => {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className='!mt-6 w-full text-2md font-bold'>Đăng nhập</Button>
+                            <CustomButton type="submit" className='!mt-6 w-full text-2md font-bold'>Đăng nhập</CustomButton>
                         </form>
                     </Form>
                 </>

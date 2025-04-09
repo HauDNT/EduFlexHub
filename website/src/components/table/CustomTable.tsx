@@ -6,7 +6,7 @@ import {
     TableCell,
     TableHeader,
     TableRow,
-} from "@/components/table";
+} from "@/components/table/index";
 import {CustomTableProps} from "@/interfaces/table";
 import {renderCellValues} from "@/utils/customTableUtils";
 import ComponentCard from "@/components/common/ComponentCard";

@@ -1,6 +1,6 @@
 import z from 'zod'
 
-// Reset password form schema
+// Reset password forms schema
 export const VerifyEmailFormSchema = z
     .object({
         email: z.string().email({message: 'Email không hợp lệ'}).min(10).max(50),
