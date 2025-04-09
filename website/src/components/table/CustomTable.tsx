@@ -12,7 +12,7 @@ import {renderCellValues} from "@/utils/customTableUtils";
 import ComponentCard from "@/components/common/ComponentCard";
 import ActionButton from "@/components/common/ActionButton";
 import {Checkbox} from "@/components/ui/checkbox"
-import {useSearchParams} from "next/navigation";
+import Searchbar from "@/components/common/Searchbar";
 
 export default function CustomTable({
     tableTitle,
@@ -22,9 +22,11 @@ export default function CustomTable({
     createItem,
     deleteItem,
     restoreItem,
+    search,
     handleCreate,
     handleDelete,
     handleRestore,
+    handleSearch,
 }: CustomTableProps) {
     const {columns, values} = tableData;
     const [itemSelected, setItemSelect] = useState<number[]>([]);
@@ -47,6 +49,13 @@ export default function CustomTable({
             title={tableTitle}
             actionBar={
                 <div className='flex justify-between w-full gap-4'>
+                    {
+                        search && (
+                            <Searchbar
+                                onSearch={(queryString) => handleSearch(queryString)}
+                            />
+                        )
+                    }
                     {
                         createItem && (
                             <ActionButton
@@ -74,8 +83,7 @@ export default function CustomTable({
                 </div>
             }
         >
-            <div
-                className={`${classname} overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]`}>
+            <div className={`${classname} overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]`}>
                 <div className="max-w-full overflow-x-auto">
                     <div className="min-w-[1102px]">
                         <Table>

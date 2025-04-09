@@ -12,6 +12,7 @@ import CustomPagination from "@/components/common/CustomPagination";
 import CreateNewAccountForm from "@/components/forms/CreateNewAccountForm";
 import ModelLayer from "@/components/common/ModelLayer";
 import {RegisterBodyType} from "@/schemas/auth.schema";
+import {RoleEnum} from "@/enums";
 
 export default function MemberManagement() {
     const {toast} = useToast()
@@ -19,20 +20,24 @@ export default function MemberManagement() {
     const type = searchParams.get('type')
     const {user} = useSelector((state: RootState) => state.auth)
     const [data, setData] = useState([])
-    const [meta, setMeta] = useState({totalPages: 1, currentPage: 1, limit: 2})
+    const [meta, setMeta] = useState({totalPages: 1, currentPage: 1, limit: 10})
     const [createFormState, setCreateFormState] = useState(false)
+    const [searchQuery, setSearchQuery] = useState("")
+    const searchFields = "username, email"
 
     const toggleCreateFormState = () => setCreateFormState(prev => !prev)
 
-    const fetchUsersByType = async (type: string) => {
+    const fetchUsersByTypeAndQuery = async (type: string, searchQuery: string, searchFields: string) => {
         try {
             const resData = (await axiosInstance.get(
                 `/users`,
                 {
                     params: {
-                        type: type,
+                        type: +type,
                         page: meta.currentPage,
                         limit: meta.limit,
+                        queryString: searchQuery,
+                        searchFields: searchFields,
                     }
                 }
             )).data;
@@ -92,6 +97,7 @@ export default function MemberManagement() {
                     if (res.data.affected > 0) {
                         toast({
                             title: "Xoá người dùng thành công",
+                            variant: "success",
                         })
 
                         setData((prevState) => ({
@@ -157,15 +163,15 @@ export default function MemberManagement() {
 
     useEffect(() => {
         if (user && user['userId']) {
-            fetchUsersByType(type);
+            fetchUsersByTypeAndQuery(type, searchQuery, searchFields);
         } else {
             console.warn('User is null or userId is missing');
         }
-    }, [type, user, meta.currentPage]);
+    }, [type, user, searchQuery, meta.currentPage]);
 
     return (
         <div>
-            <PageBreadcrumb pageTitle={type.charAt(0).toUpperCase() + type.slice(1)}/>
+            <PageBreadcrumb pageTitle={RoleEnum[type].charAt(0).toUpperCase() + RoleEnum[type].slice(1)}/>
             {
                 data?.columns && (
                     <div className="space-y-6">
@@ -175,8 +181,11 @@ export default function MemberManagement() {
                             onSort={(key) => console.log(`Sorting by ${key}`)}
                             createItem={true}
                             deleteItem={true}
+                            search={true}
+                            searchFields={['username', 'email']}
                             handleCreate={toggleCreateFormState}
                             handleDelete={(itemSelected) => handleDeleteUsers(itemSelected)}
+                            handleSearch={(query) => setSearchQuery(query)}
                         />
                     </div>
                 )

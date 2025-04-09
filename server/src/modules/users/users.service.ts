@@ -1,13 +1,14 @@
 import {HttpException, Injectable, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {User} from './entities/user.entity';
-import {In, Repository, UpdateResult, IsNull} from 'typeorm';
+import {In, Repository, UpdateResult, IsNull, Like} from 'typeorm';
 import {ResetPasswordDTO} from "@/modules/auth/dto/forgot-password.dto";
 import {hashPassword} from "@/utils/bcrypt";
 import {RoleEnum} from "@/database/enums/RoleEnum";
 import {Role} from "@/modules/roles/entities/role.entity";
 import {TableMetaData} from "@/interfaces/table";
 import {PaginationQueryDTO} from "@/utils/PaginationQueryDTO";
+import {GetUsersDTO} from "@/modules/users/dto";
 
 @Injectable()
 export class UsersService {
@@ -57,27 +58,17 @@ export class UsersService {
         }
     }
 
-    async getAllMembersByTypeQuery(type: string, pagination: PaginationQueryDTO): Promise<TableMetaData<User>> {
-        let roleNumber = 0
-        const { page, limit } = pagination;
-
-        switch (type) {
-            case 'admin':
-                roleNumber = RoleEnum.Admin
-                break
-            case 'staff':
-                roleNumber = RoleEnum.Staff
-                break
-            case 'student':
-                roleNumber = RoleEnum.Student
-                break
-            case 'teacher':
-                roleNumber = RoleEnum.Teacher
-                break
-        }
+    async getUsersByTypeAndQuery(data: GetUsersDTO): Promise<TableMetaData<User>> {
+        const {
+            type,
+            page,
+            limit,
+            queryString,
+            searchFields,
+        } = data;
 
         const role = await this.roleRepository.findOneBy(
-            {id: roleNumber}
+            {id: type}
         )
 
         // Tính skip và take
@@ -89,8 +80,28 @@ export class UsersService {
         const skip = (page - 1) * limit
         const take = limit
 
+        // Tạo điều kiện cho queryString
+        const where: any = {};
+        where.role_id = role
+        where.deleted_at = IsNull()
+
+        console.log('Query string: ' + queryString)
+        console.log('Search fields: ' + searchFields)
+
+        // Xử lý tìm kiếm trên nhiều trường
+        let searchConditions: any[] = [];
+        if (queryString && searchFields) {
+            const fields = searchFields.split(',').map((field) => field.trim());
+            searchConditions = fields.map((field) => ({
+                ...where,
+                [field]: Like(`%${queryString}%`),
+            }));
+        }
+
+        console.log(searchConditions.length)
+
         const [users, total] = await this.userRepository.findAndCount({
-            where: { role_id: role, deleted_at: IsNull() },
+            where: searchConditions.length > 0 ? searchConditions : where,
             select: ['id', 'username', 'fullname', 'email', 'gender', 'is_online', 'is_active'],
             skip,
             take,
@@ -133,6 +144,29 @@ export class UsersService {
             }
         }
     }
+
+    // async searchMembers(type: string, queryString: string, searchFields: string[]) {
+    //     let roleNumber = 0
+    //
+    //     switch (type) {
+    //         case 'admin':
+    //             roleNumber = RoleEnum.Admin
+    //             break
+    //         case 'staff':
+    //             roleNumber = RoleEnum.Staff
+    //             break
+    //         case 'student':
+    //             roleNumber = RoleEnum.Student
+    //             break
+    //         case 'teacher':
+    //             roleNumber = RoleEnum.Teacher
+    //             break
+    //     }
+    //
+    //     const role = await this.roleRepository.findOneBy(
+    //         {id: roleNumber}
+    //     )
+    // }
 
     async softDeleteUsers(userItemIds: string[]): Promise<UpdateResult> {
         try {

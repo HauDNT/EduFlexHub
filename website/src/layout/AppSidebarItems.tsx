@@ -8,10 +8,10 @@ export const AdminSidebarItems = [
         name: "Người dùng",
         icon: <FaUserCircle size={25}/>,
         subItems: [
-            {name: "Quản trị", path: "/admin/members?type=admin"},
-            {name: "Nhân viên", path: "/admin/members?type=staff"},
-            {name: "Học viên", path: "/admin/members?type=student"},
-            {name: "Giảng viên", path: "/admin/members?type=teacher"},
+            {name: "Quản trị", path: "/admin/members?type=0"},
+            {name: "Nhân viên", path: "/admin/members?type=1"},
+            {name: "Giảng viên", path: "/admin/members?type=2"},
+            {name: "Học viên", path: "/admin/members?type=3"},
         ],
     },
     {

@@ -4,7 +4,7 @@ import {User} from "@/modules/users/entities/user.entity";
 import {TableMetaData} from "@/interfaces/table";
 import {DeleteUsersDTO} from "@/modules/users/dto";
 import {UpdateResult} from "typeorm";
-import {RegisterDTO} from "@/modules/auth/dto/register.dto";
+import {RoleEnum} from "@/database/enums/RoleEnum";
 
 @Controller('users')
 export class UsersController {
@@ -13,19 +13,21 @@ export class UsersController {
     ) {}
 
     @Get()
-    async getByType(
-        @Query('type') type: string,
+    async getUsersByTypeAndQuery(
+        @Query('type') type: RoleEnum,
         @Query('page') page: number,
         @Query('limit') limit: number,
+        @Query('queryString') queryString: string,
+        @Query('searchFields') searchFields: string,
     ): Promise<TableMetaData<User>> {
-        if (!['admin', 'staff', 'student', 'teacher'].includes(type)) {
+        if (!Object.values(RoleEnum).includes(type)) {
             throw new BadRequestException({
                 message: 'Loại tài khoản không hợp lệ',
                 status: 400,
             })
         }
 
-        return await this.usersService.getAllMembersByTypeQuery(type, { page, limit })
+        return await this.usersService.getUsersByTypeAndQuery({type, page, limit, queryString, searchFields})
     }
     
     @Delete('/delete-users')
