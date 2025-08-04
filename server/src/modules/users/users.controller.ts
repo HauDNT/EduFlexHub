@@ -27,7 +27,7 @@ export class UsersController {
             })
         }
 
-        return await this.usersService.getUsersByTypeAndQuery({type, page, limit, queryString, searchFields})
+        return await this.usersService.getUsersByTypeAndQuery({page, limit, queryString, searchFields}, type)
     }
     
     @Delete('/delete-users')

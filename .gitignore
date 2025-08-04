@@ -1,0 +1,96 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables
+.env
+.env.*.local
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+.env.production.local
+
+# TypeScript
+*.tsbuildinfo
+dist/
+build/
+
+# NestJS specific
+/.dist/
+/dist/
+/coverage/
+/test-results/
+
+# Next.js specific
+.next/
+/out/
+/.next/static/
+/.next/cache/
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Linux
+*.swp
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs folder
+logs/
+*.log
+
+# Coverage reports
+coverage/
+
+# Debug
+.idea/
+*.iml
+
+# Others
+.cache/
+.parcel-cache/
+*.tgz
+*.log
+*.tmp
+*.bak
+*.orig
+
+# Prisma (if used)
+prisma/dev.db
+prisma/dev.db-journal
+
+# ESLint cache
+.eslintcache
+
+# Turbo (if using Turborepo)
+turbo/
+
+# NX (if using NX monorepo)
+nx-cache/
+.project.json

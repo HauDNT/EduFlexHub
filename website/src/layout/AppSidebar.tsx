@@ -169,8 +169,8 @@ const AppSidebar: React.FC = () => {
     );
 
     const [openSubmenu, setOpenSubmenu] = useState<{
-        type: "main";
-        // type: "main" | "others";
+        // type: "main";
+        type: "main" | "others";
         index: number;
     } | null>(null);
     const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(

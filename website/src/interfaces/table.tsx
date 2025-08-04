@@ -2,7 +2,7 @@ import React, {ReactNode} from "react";
 
 // Props for Table
 export interface TableProps {
-    children: ReactNode; // Table content (thead, tbody, etc.)
+    children?: ReactNode; // Table content (thead, tbody, etc.)
     className?: string; // Optional className for styling
     tableTitle?: string;
     createItem?: boolean;
@@ -10,10 +10,11 @@ export interface TableProps {
     deleteItem?: boolean;
     search?: boolean;
     restoreItem?: boolean;
-    handleCreate?: void;
-    handleDelete?: void;
-    handleRestore?: void;
-    handleSearch?: void;
+    handleCreate?: () => void;
+    handleDetail?: (item: Record<string, any>) => void;
+    handleDelete?: (item: any) => Promise<void>;
+    handleRestore?: () => void;
+    handleSearch?: (item: any) => void;
 }
 
 // Props for TableHeader
@@ -40,7 +41,7 @@ export interface TableCellProps {
     key?: number;       // Key for map loop
     isHeader?: boolean; // If true, renders as <th>, otherwise <td>
     className?: string; // Optional className for styling
-    onClick?: void;
+    onClick?: () => void;
 }
 
 // Table Props
@@ -52,7 +53,7 @@ export interface CustomTableProps extends TableProps {
 export interface CustomTableColumn {
     key: string;
     displayName: string;
-    type: 'string' | 'number' | 'boolean' | 'date';
+    type: 'string' | 'number' | 'boolean' | 'date' | 'gender';
     valueMapping?: Record<string, any>
 }
 

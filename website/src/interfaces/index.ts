@@ -1,8 +1,9 @@
 import { Theme} from "@/types";
-import React from "react";
+import React, { FormEvent } from "react";
 
 // Authen
 export interface LoginResponseInterface {
+    role: any;
     userId: string,
     username: string,
     accessToken: string,
@@ -10,6 +11,7 @@ export interface LoginResponseInterface {
 
 // Redux
 interface ReduxUserState {
+    role: any;
     userId: string,
     username: string,
 }
@@ -33,10 +35,10 @@ export interface ThemeState {
 }
 
 // Form
-export interface FormInterface {
-    onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-    className?: string;
-    onClose: () => void;
+export interface FormInterface<T = any> {
+  onSubmit: (formData: T) => Promise<void>;
+  className?: string;
+  onClose?: () => void;
 }
 
 // Model layer
@@ -53,3 +55,6 @@ export interface SearchbarInterface {
     onSearch: (query: string, searchFields?: string[]) => void;
     debounceTime?: number;
 }
+
+export * from '@/interfaces/metaPaginate';
+export * from '@/interfaces/table';
