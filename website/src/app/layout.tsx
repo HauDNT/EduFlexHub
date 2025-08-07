@@ -4,6 +4,7 @@ import {Toaster} from "@/components/ui/toaster"
 import RootReduxProvider from "@/redux/RootReduxProvider";
 import "./globals.css";
 import React from "react";
+import ReactQueryProvider from "@/react-query/ReactQueryProvider";
 
 const webFont = localFont({
     src: '../assets/fonts/Roboto/Roboto-Regular.ttf',
@@ -21,9 +22,11 @@ export default function RootLayout({children,}: Readonly<{
     return (
         <html lang="en">
             <body className={`${webFont.className} dark:bg-gray-900`}>
-                <RootReduxProvider>
-                    {children}
-                </RootReduxProvider>
+                <ReactQueryProvider>
+                    <RootReduxProvider>
+                        {children}
+                    </RootReduxProvider>
+                </ReactQueryProvider>
                 <Toaster/>
             </body>
         </html>
