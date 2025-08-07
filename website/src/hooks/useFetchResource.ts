@@ -18,8 +18,17 @@ export const useFetchResource = ({
   searchFields = '',
   ...restParams
 }: FetchResourceParams) => {
+  const queryKey = [
+    resource,
+    page,
+    limit,
+    queryString,
+    searchFields,
+    ...Object.entries(restParams).map(([key, value]) => `${key}:${value}`),
+  ];
+
   return useQuery({
-    queryKey: [resource, page, limit, queryString, searchFields],
+    queryKey,
     queryFn: async () => {
       const response = await axiosInstance.get(`/${resource}`, {
         params: { page, limit, queryString, searchFields, ...restParams, },
