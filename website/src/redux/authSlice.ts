@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { ReduxAuthState } from '@/interfaces'
 
 const initialState: ReduxAuthState = {
-    user: null,
+    userAuth: null,
     token: null,
 }
 
@@ -11,7 +11,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setReduxAuthToken: (state, action) => {
-            state.user = {
+            state.userAuth = {
                 userId: action.payload.userId,
                 username: action.payload.username ?? undefined,
                 email: action.payload.email ?? undefined,
@@ -20,7 +20,7 @@ const authSlice = createSlice({
             state.token = action.payload.accessToken;
         },
         removeReduxAuthToken: (state) => {
-            state.user = null;
+            state.userAuth = null;
             state.token = null;
         }
     }

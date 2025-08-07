@@ -14,10 +14,11 @@ interface ReduxUserState {
     role: any;
     userId: string,
     username: string,
+    email: string,
 }
 
 export interface ReduxAuthState {
-    user: ReduxUserState | null,
+    userAuth: ReduxUserState | null,
     token: string | null,
 }
 

@@ -21,7 +21,7 @@ export default function MemberManagement() {
     const {toast} = useToast()
     const searchParams = useSearchParams()
     const type = searchParams.get('type') ?? ''
-    const {user} = useSelector((state: RootState) => state.auth)
+    const {userAuth} = useSelector((state: RootState) => state.auth)
     const [data, setData] = useState<CustomTableData>({
       columns: [],
       values: [],
@@ -50,6 +50,14 @@ export default function MemberManagement() {
             }
           }
         )).data;
+
+        resData?.values?.find((user: { id: string; disableCheck: boolean; }) => {
+          if (userAuth && user.id === userAuth['userId']) {
+            user.disableCheck = true;
+            return true;
+          }
+          return false;
+        });
 
         setData({
             columns: resData.columns,
@@ -88,15 +96,19 @@ export default function MemberManagement() {
               return;
           }
 
-          const result = await axiosInstance.post<any>('/auth/register', {...values});
+          const resData = (await axiosInstance.post<any>('/auth/register', {...values})).data;
 
-          if (result.status === HttpStatusCode.Created) {
+          if (resData.status === HttpStatusCode.Created) {
               toast({
                   title: "Tạo tài khoản thành công",
                   variant: "success",
               });
 
-              setCreateFormState(false)
+              setCreateFormState(false);
+              setData(prev => ({
+                ...prev,
+                values: [...prev.values, {...resData.data, disableCheck: false}]
+              }));
           }
       } catch (error) {
           const errorMessage = handleAxiosError(error);
@@ -127,7 +139,7 @@ export default function MemberManagement() {
             search={true}
             handleCreate={toggleCreateFormState}
             handleDetail={(userSelected) => console.log(userSelected)}
-            // handleDelete={(userSelected) => console.log(userSelected)}
+            handleDelete={async (userSelected) => await console.log(userSelected)}    // Test event
             handleSearch={(query) => setSearchQuery(query)}
           />
         </div>

@@ -1,0 +1,13 @@
+[type] - Mô tả ngắn gọn (tối đa 72 ký tự)
+
+# Gợi ý các loại type (tiền tố):
+# Feat     : Tính năng mới
+# Fix      : Sửa lỗi
+# Update   : Cập nhật logic, mở rộng tính năng
+# Refactor : Cải tiến code không thay đổi hành vi
+# Chore    : Thay đổi lặt vặt (build, config, package)
+# Test     : Thêm hoặc sửa unit test
+# Style    : Thay đổi style code (formatting, indent...)
+# Docs     : Thêm hoặc sửa tài liệu
+# Remove   : Xóa tính năng / thành phần không còn dùng
+# -----------------------------------------------------------------------

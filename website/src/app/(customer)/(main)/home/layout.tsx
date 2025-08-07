@@ -7,7 +7,7 @@ export default function HomeLayout({children}: Readonly<{ children: React.ReactN
     return (
         <div className="min-h-screen xl:flex">
             {/* Sidebar */}
-            <AppSidebar navItems={AdminSidebarItems} sidebarType={'admin'}/>
+            <AppSidebar/>
             {/* Main Content Area */}
             <ContentPage>
                 {children}

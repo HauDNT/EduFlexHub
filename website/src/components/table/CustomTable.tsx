@@ -7,11 +7,12 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/table/index";
-import {CustomTableProps} from "@/interfaces/table";
-import {renderCellValues} from "@/utils/customTableUtils";
+import { MdMore } from 'react-icons/md';
+import { CustomTableProps } from "@/interfaces/table";
+import { renderCellValues } from "@/utils/customTableUtils";
 import ComponentCard from "@/components/common/ComponentCard";
 import ActionButton from "@/components/common/ActionButton";
-import {Checkbox} from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox"
 import Searchbar from "@/components/common/Searchbar";
 
 export default function CustomTable({
@@ -20,6 +21,7 @@ export default function CustomTable({
     onSort,
     className,
     createItem,
+    detailItem,
     deleteItem,
     restoreItem,
     search,
@@ -29,16 +31,16 @@ export default function CustomTable({
     handleRestore,
     handleSearch,
 }: CustomTableProps) {
-    const {columns, values} = tableData;
+    const { columns, values } = tableData;
     const [itemSelected, setItemSelect] = useState<number[]>([]);
 
     const handleItemChecked = (itemId: number, checked: boolean) => {
         if (checked) {
             setItemSelect((prev) => {
                 if (prev.includes(itemId)) {
-                    return prev; // Nếu itemId đã có, không thêm lại
+                    return prev;
                 }
-                return [...prev, itemId]; // Thêm itemId vào danh sách
+                return [...prev, itemId];
             });
         } else {
             setItemSelect((prev) => prev.filter((id) => id !== itemId));
@@ -91,18 +93,16 @@ export default function CustomTable({
                             {/* Table Header */}
                             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                 <TableRow>
-                                    {
-                                        (deleteItem || restoreItem) && (
-                                            <TableCell
-                                                isHeader
-                                                className="px-3 pb-2 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
-                                            >
-                                                <Checkbox className={'table-select-all'}/>
-                                            </TableCell>
-                                        )
-                                    }
-                                    {
-                                        columns.map((col, index) => (
+                                    {(deleteItem || restoreItem) && tableData?.columns?.length > 0 && (
+                                        <TableCell
+                                            isHeader
+                                            className="px-3 pb-2 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
+                                        >
+                                            <Checkbox className={'table-select-all'} />
+                                        </TableCell>
+                                    )}
+                                    {tableData?.values && tableData?.columns ? (
+                                        columns.map((col, index) =>
                                             col.key !== 'id' ? (
                                                 <TableCell
                                                     key={index}
@@ -112,78 +112,110 @@ export default function CustomTable({
                                                 >
                                                     {col.displayName}
                                                 </TableCell>
-                                            ) : null
-                                        ))
-                                    }
+                                            ) : null,
+                                        )
+                                    ) : (
+                                        <TableCell
+                                            key={1}
+                                            isHeader
+                                            className="px-5 py-3 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
+                                        >
+                                            Không có dữ liệu
+                                        </TableCell>
+                                    )}
+                                    {detailItem && (
+                                        <TableCell
+                                            isHeader
+                                            className="px-3 pb-2 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
+                                        >
+                                            <span>Chi tiết</span>
+                                        </TableCell>
+                                    )}
                                 </TableRow>
                             </TableHeader>
 
                             {/* Table Body */}
-                            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                {values.map((row, index) => (
-                                    <TableRow key={index}>
-                                        {
-                                            (deleteItem || restoreItem) && (
-                                                row.disableCheck ? (
-                                                    <span/>
-                                                ) : (
-                                                    <TableCell
-                                                        key={index}
-                                                        onClick={() => {}}
-                                                        className="px-5 py-3 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
-                                                    >
-                                                        <Checkbox
-                                                            className={'table-select-item'}
-                                                            checked={itemSelected.includes(row.id)}
-                                                            onCheckedChange={(checked) => handleItemChecked(row.id, checked as boolean)}
-                                                        />
-                                                    </TableCell>
+                            {tableData?.values?.length > 0 ? (
+                                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                    {values.map((row, index) => (
+                                        <TableRow key={index}>
+                                            {
+                                                (deleteItem || restoreItem) && (
+                                                    row.disableCheck ? (
+                                                        <span />
+                                                    ) : (
+                                                        <TableCell
+                                                            key={index}
+                                                            onClick={() => { }}
+                                                            className="px-5 py-3 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
+                                                        >
+                                                            <Checkbox
+                                                                className={'table-select-item'}
+                                                                checked={itemSelected.includes(row.id)}
+                                                                onCheckedChange={(checked) => handleItemChecked(row.id, checked as boolean)}
+                                                            />
+                                                        </TableCell>
+                                                    )
                                                 )
-                                            )
-                                        }
-                                        {
-                                            columns.map((col, index) => (
-                                                col.key !== 'id' ? (
-                                                    <TableCell key={index} className="px-5 py-4 sm:px-6 text-center">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className={'w-full'}>
-                                                                <span className="block text-gray-600 text-center text-theme-sm">
-                                                                {
-                                                                    col.key === 'is_online' ?
-                                                                        (
-                                                                            <div className={'w-100 flex justify-center'}>
-                                                                                {
-                                                                                    row[col.key] === true ? (
-                                                                                        <span
-                                                                                            className={`absolute h-2 w-2 rounded-full bg-green-400 flex`}>
-                                                                                        <span
-                                                                                            className="absolute inline-flex w-full h-full bg-green-400 rounded-full opacity-75 animate-ping"/>
+                                            }
+                                            {
+                                                columns.map((col, index) => (
+                                                    col.key !== 'id' ? (
+                                                        <TableCell key={index} className="px-5 py-4 sm:px-6 text-center">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className={'w-full'}>
+                                                                    <span className="block text-gray-600 text-center text-theme-sm">
+                                                                        {
+                                                                            col.key === 'is_online' ?
+                                                                                (
+                                                                                    <div className={'w-100 flex justify-center'}>
+                                                                                        {
+                                                                                            row[col.key] === true ? (
+                                                                                                <span
+                                                                                                    className={`absolute h-2 w-2 rounded-full bg-green-400 flex`}>
+                                                                                                    <span
+                                                                                                        className="absolute inline-flex w-full h-full bg-green-400 rounded-full opacity-75 animate-ping" />
+                                                                                                </span>
+                                                                                            ) : (
+                                                                                                <span
+                                                                                                    className="relative h-2 w-2 rounded-full bg-red-400 flex items-center justify-center">
+                                                                                                    <span
+                                                                                                        className="inline-flex w-full h-full bg-red-400 rounded-full opacity-75 animate-ping" />
+                                                                                                </span>
+                                                                                            )
+                                                                                        }
+                                                                                    </div>
+                                                                                ) : (
+                                                                                    <span>
+                                                                                        {renderCellValues(col, row[col.key])}
                                                                                     </span>
-                                                                                    ) : (
-                                                                                        <span
-                                                                                            className="relative h-2 w-2 rounded-full bg-red-400 flex items-center justify-center">
-                                                                                        <span
-                                                                                            className="inline-flex w-full h-full bg-red-400 rounded-full opacity-75 animate-ping"/>
-                                                                                    </span>
-                                                                                    )
-                                                                                }
-                                                                            </div>
-                                                                        ) : (
-                                                                            <span>
-                                                                                {renderCellValues(col, row[col.key])}
-                                                                            </span>
-                                                                        )
-                                                                }
-                                                                </span>
+                                                                                )
+                                                                        }
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </TableCell>
-                                                ) : null
-                                            ))
-                                        }
-                                    </TableRow>
-                                ))}
-                            </TableBody>
+                                                        </TableCell>
+                                                    ) : null
+                                                ))
+                                            }
+                                            {detailItem && (
+                                                <TableCell
+                                                    isHeader
+                                                    className="px-3 pb-2 font-medium text-black-500 text-center text-theme-sm dark:text-gray-400"
+                                                >
+                                                    <span className={'w-full block'}>
+                                                        <MdMore
+                                                            size={20}
+                                                            className={'dark:white m-auto cursor-pointer'}
+                                                            onClick={() => handleDetail?.(row)}
+                                                        />
+                                                    </span>
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            ) : null}
                         </Table>
                     </div>
                 </div>

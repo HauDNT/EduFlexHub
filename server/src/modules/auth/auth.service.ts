@@ -108,7 +108,7 @@ export class AuthService {
     }
   }
 
-  async registerAccount(data: RegisterDTO): Promise<RegisterResponseDTO> {
+  async registerAccount(data: RegisterDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     try {
@@ -122,7 +122,7 @@ export class AuthService {
         !data.re_password ||
         !data.account_type
       ) {
-        throw new BadRequestException('Thông tin đăng ký không hợp lệ');
+        throw new BadRequestException('Thông tin đăng ký tài khoản không hợp lệ');
       }
 
       const { username, password, re_password, account_type } = data;
@@ -161,10 +161,16 @@ export class AuthService {
       return {
         status: 201,
         message: 'Đăng ký thành công',
+        data: {
+          username,
+          fullname: '',
+          email: '',
+          gender: 3,
+          is_online: false,
+        },
       };
     } catch (e) {
       await queryRunner.rollbackTransaction();
-      console.log(`Lỗi đăng ký: ${e.message}`);
 
       if (e instanceof HttpException) {
         throw e;

@@ -25,7 +25,7 @@ const AppSidebar: React.FC = () => {
     } = useSelector((state: RootState) => state.sidebar)
 
     const roleState: SidebarType = useSelector((state: RootState) => {
-        const role = state.auth && state.auth.user ? state.auth.user.role : "Student";
+        const role = state.auth && state.auth.userAuth ? state.auth.userAuth.role : "Student";
         return Object.values(RoleEnum).includes(role) ? role : "Student";
     });
 
