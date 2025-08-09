@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import {AuthService} from './auth.service';
 import {AuthController} from './auth.controller';
 import {JWTStrategy} from '@/authentication/jwt/jwt-strategy';
@@ -21,37 +21,37 @@ import {SessionsService} from "@/modules/sessions/sessions.service";
 import {Session} from "@/modules/sessions/entities/session.entity";
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([User, SocialAccount, Role, Session]),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('secret_key'),
-                signOptions: {
-                    expiresIn: '1d',
-                }
-            }),
-            inject: [ConfigService],
-        }),
-        UsersModule,
-        MailModule,
-        RolesModule,
-        SessionsModule,
-        SocialAccountsModule,
-        PassportModule.register({
-            defaultStrategy: 'google',
-            session: true,
-        }),
-    ],
-    controllers: [AuthController],
-    providers: [
-        AuthService,
-        UsersService,
-        RolesService,
-        SessionsService,
-        JWTStrategy,
-        GoogleStrategy,
-    ],
+  imports: [
+    TypeOrmModule.forFeature([User, SocialAccount, Role, Session]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('secret_key'),
+        signOptions: {
+          expiresIn: '1d',
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    forwardRef(() => UsersModule),
+    MailModule,
+    RolesModule,
+    SessionsModule,
+    SocialAccountsModule,
+    PassportModule.register({
+      defaultStrategy: 'google',
+      session: true,
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [
+    AuthService,
+    UsersService,
+    RolesService,
+    SessionsService,
+    JWTStrategy,
+    GoogleStrategy,
+  ],
+  exports: [AuthService],
 })
-export class AuthModule {
-}
+export class AuthModule {}

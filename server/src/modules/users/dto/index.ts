@@ -33,3 +33,9 @@ export class GetUsersDTO {
     @Min(1)
     limit?: number = 10;
 }
+
+export class DeleteUserDto {
+    @IsArray()
+    @IsNotEmpty({ message: 'Danh sách id tài khoản người dùng không hợp lệ' })
+    userIds: string[];
+}

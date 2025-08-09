@@ -6,7 +6,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { In, Repository, UpdateResult, IsNull, Like } from 'typeorm';
+import {
+  In,
+  Repository,
+  UpdateResult,
+  IsNull,
+  Like,
+  DataSource,
+} from 'typeorm';
 import { ResetPasswordDTO } from '@/modules/auth/dto/forgot-password.dto';
 import { hashPassword } from '@/utils/bcrypt';
 import { Role } from '@/modules/roles/entities/role.entity';
@@ -14,6 +21,7 @@ import { TableMetaData } from '@/interfaces/table';
 import { getDataWithQueryAndPaginate } from '@/utils/paginateAndSearch';
 import { GetDataWithQueryParamsDTO } from '@/dto';
 import { RoleEnum } from '@/database/enums/RoleEnum';
+import { validateAndGetEntitiesByIds } from '@/utils/validateAndGetEntitiesByIds';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +30,7 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findById(userId: number): Promise<User> {
@@ -81,7 +90,14 @@ export class UsersService {
       limit,
       queryString,
       searchFields: searchFields ? searchFields.split(',') : [],
-      selectFields: ['id', 'username', 'fullname', 'email', 'gender', 'is_online'],
+      selectFields: [
+        'id',
+        'username',
+        'fullname',
+        'email',
+        'gender',
+        'is_online',
+      ],
       columnsMeta: [
         { key: 'id', displayName: 'ID', type: 'number' },
         { key: 'username', displayName: 'Tên người dùng', type: 'string' },
@@ -106,26 +122,54 @@ export class UsersService {
           },
         },
       ],
-      where: {role_id: role}
+      where: { role_id: role },
     });
   }
 
-  async softDeleteUsers(userItemIds: string[]): Promise<UpdateResult> {
+  // async softDeleteUsers(userItemIds: string[]): Promise<UpdateResult> {
+  //   try {
+  //     return this.userRepository.update(
+  //       { id: In(userItemIds) },
+  //       { is_online: false, deleted_at: new Date() },
+  //     );
+  //   } catch (e) {
+  //     if (e instanceof HttpException) {
+  //       throw e;
+  //     }
+
+  //     throw new InternalServerErrorException(
+  //       'Xảy ra lỗi từ phía server trong quá trình xoá người dùng',
+  //     );
+  //   }
+  // }
+
+  async forceDeleteUsers(userIds: string[]): Promise<any> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      return this.userRepository.update(
-        { id: In(userItemIds) },
-        { is_online: false, deleted_at: new Date() },
+      const users = await validateAndGetEntitiesByIds(
+        this.userRepository,
+        userIds,
       );
-    } catch (e) {
-      console.log('Error when soft delete users: ', e.message);
 
-      if (e instanceof HttpException) {
-        throw e;
-      }
+      const deleteUsersResult = await queryRunner.manager.delete(User, {
+        id: In(userIds),
+      });
 
-      throw new InternalServerErrorException(
-        'Xảy ra lỗi từ phía server trong quá trình xoá người dùng',
-      );
+      // Delete user avatars here!!!!
+
+
+      // ----------------------------
+
+      await queryRunner.commitTransaction();
+      return deleteUsersResult;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('Xoá danh sách tài khoản thất bại: ' + error.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 }

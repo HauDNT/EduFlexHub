@@ -16,7 +16,6 @@ import { SocialAccount } from '@/modules/social_accounts/entities/social_account
 import { ExceptionHandler } from '@nestjs/core/errors/exception-handler';
 import { RegisterDTO } from '@/modules/auth/dto/register.dto';
 import { comparePassword, hashPassword } from '@/utils/bcrypt';
-import { RegisterResponseDTO } from '@/modules/auth/dto/register-response';
 import { Role } from '@/modules/roles/entities/role.entity';
 import { SessionsService } from '@/modules/sessions/sessions.service';
 import { AdminLoginDTO } from '@/modules/auth/dto/admin-login-account.dto';

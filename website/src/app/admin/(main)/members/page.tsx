@@ -15,6 +15,7 @@ import { usePaginate } from '@/hooks';
 import { MetaPaginate } from '@/interfaces';
 import { useFetchResource } from '@/hooks/useFetchResource';
 import { useCreateResource } from '@/hooks/useCreateResource';
+import { useDeleteResource } from '@/hooks/useDeleteResource';
 
 export default function MemberManagement() {
   const { toast } = useToast()
@@ -58,6 +59,24 @@ export default function MemberManagement() {
     },
   )
 
+  const handleDeleteUsers = useDeleteResource(
+    'users',
+    'userIds',
+    () => {
+      toast({
+        title: `Đã xoá tài khoản người dùng thành công`,
+        variant: 'success',
+      });
+    },
+    (error) => {
+      toast({
+        title: 'Xoá tài khoản người dùng thất bại',
+        description: handleAxiosError(error),
+        variant: 'destructive',
+      });
+    },
+  )
+
   useEffect(() => {
     if (cachedData) {
       setData({
@@ -87,7 +106,7 @@ export default function MemberManagement() {
           search={true}
           handleCreate={toggleCreateFormState}
           handleDetail={(userSelected) => console.log(userSelected)}
-          handleDelete={async (userSelected) => await console.log(userSelected)}    // Test event
+          handleDelete={async(userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
           handleSearch={(query) => setSearchQuery(query)}
         />
       </div>
