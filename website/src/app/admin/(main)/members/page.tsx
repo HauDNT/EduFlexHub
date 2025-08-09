@@ -15,7 +15,7 @@ import { usePaginate } from '@/hooks';
 import { MetaPaginate } from '@/interfaces';
 import { useFetchResource } from '@/hooks/useFetchResource';
 import { useCreateResource } from '@/hooks/useCreateResource';
-import { useDeleteResource } from '@/hooks/useDeleteResource';
+import { useSoftDeleteResource } from '@/hooks/useSoftDeleteResource';
 
 export default function MemberManagement() {
   const { toast } = useToast()
@@ -59,7 +59,7 @@ export default function MemberManagement() {
     },
   )
 
-  const handleDeleteUsers = useDeleteResource(
+  const handleDeleteUsers = useSoftDeleteResource(
     'users',
     'userIds',
     () => {

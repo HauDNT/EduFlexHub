@@ -13,6 +13,7 @@ import {
   IsNull,
   Like,
   DataSource,
+  DeleteResult,
 } from 'typeorm';
 import { ResetPasswordDTO } from '@/modules/auth/dto/forgot-password.dto';
 import { hashPassword } from '@/utils/bcrypt';
@@ -126,24 +127,36 @@ export class UsersService {
     });
   }
 
-  // async softDeleteUsers(userItemIds: string[]): Promise<UpdateResult> {
-  //   try {
-  //     return this.userRepository.update(
-  //       { id: In(userItemIds) },
-  //       { is_online: false, deleted_at: new Date() },
-  //     );
-  //   } catch (e) {
-  //     if (e instanceof HttpException) {
-  //       throw e;
-  //     }
+  async softDeleteUsers(userIds: string[]): Promise<UpdateResult> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  //     throw new InternalServerErrorException(
-  //       'Xảy ra lỗi từ phía server trong quá trình xoá người dùng',
-  //     );
-  //   }
-  // }
+    try {
+      const users = await validateAndGetEntitiesByIds(
+        this.userRepository,
+        userIds,
+      );
 
-  async forceDeleteUsers(userIds: string[]): Promise<any> {
+      const softDeleteUsersResult = await queryRunner.manager.update(User, {
+        id: In(userIds),
+      },{
+        deleted_at: Date(),
+      });
+
+      await queryRunner.commitTransaction();
+      return softDeleteUsersResult;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(
+        'Xoá danh sách tài khoản thất bại: ' + error.message,
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async forceDeleteUsers(userIds: string[]): Promise<DeleteResult> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -160,14 +173,15 @@ export class UsersService {
 
       // Delete user avatars here!!!!
 
-
       // ----------------------------
 
       await queryRunner.commitTransaction();
       return deleteUsersResult;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Xoá danh sách tài khoản thất bại: ' + error.message);
+      throw new InternalServerErrorException(
+        'Xoá danh sách tài khoản thất bại: ' + error.message,
+      );
     } finally {
       await queryRunner.release();
     }

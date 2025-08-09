@@ -50,13 +50,11 @@ export class UsersController {
     return this.authService.registerAccount(data);
   }
 
-  // @Delete('/delete-users')
-  // async deleteUsers(
-  //     @Body() data: DeleteUsersDTO
-  // ): Promise<UpdateResult> {
-  //     const { userItemIds } = data
-  //     return await this.usersService.softDeleteUsers(userItemIds);
-  // }
+  @Delete('/soft-delete')
+  async softDeleteUsers(@Body() data: DeleteUserDto): Promise<UpdateResult> {
+    const { userIds } = data;
+    return await this.usersService.softDeleteUsers(userIds);
+  }
 
   @Delete('/delete')
   async deleteUsers(@Body() data: DeleteUserDto): Promise<DeleteResult> {
