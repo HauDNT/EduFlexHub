@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { handleAxiosError } from "@/utils/axiosInstance";
@@ -7,17 +8,19 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import CustomTable from "@/components/table/CustomTable";
 import CustomPagination from "@/components/common/CustomPagination";
 import CreateNewAccountForm from "@/components/forms/CreateNewAccountForm";
+import UpdateAccountForm from "@/components/forms/UpdateAccountForm";
 import ModelLayer from "@/components/common/ModelLayer";
 import { RegisterBodyType } from "@/schemas/auth.schema";
 import { RoleEnum } from "@/enums";
 import { CustomTableData } from '@/interfaces/table';
 import { usePaginate } from '@/hooks';
-import { MetaPaginate } from '@/interfaces';
+import { MetaPaginate, UserDetailFormInterface } from '@/interfaces';
 import { useFetchResource } from '@/hooks/useFetchResource';
 import { useCreateResource } from '@/hooks/useCreateResource';
 import { useSoftDeleteResource } from '@/hooks/useSoftDeleteResource';
 
 export default function MemberManagement() {
+  const router = useRouter();
   const { toast } = useToast()
   const searchParams = useSearchParams()
   const type = searchParams.get('type') ?? ''
@@ -40,8 +43,16 @@ export default function MemberManagement() {
     meta,
     setMetaCallback: setMeta,
   })
-  const [createFormState, setCreateFormState] = useState(false)
+  const [createFormState, setCreateFormState] = useState<boolean>(false)
   const toggleCreateFormState = () => setCreateFormState(prev => !prev)
+  const [updateFormState, setUpdateFormState] = useState<boolean>(false)
+  const [detailUserData, setDetailUserData] = useState<UserDetailFormInterface>({
+    id: 0,
+    username: '',
+    email: '',
+    fullname: '',
+    gender: '',
+  });
 
   const handleCreateNewUser = useCreateResource(
     'users',
@@ -103,9 +114,14 @@ export default function MemberManagement() {
           createItem={true}
           detailItem={true}
           deleteItem={true}
+          restoreItem={true}
           search={true}
           handleCreate={toggleCreateFormState}
-          handleDetail={(userSelected) => console.log(userSelected)}
+          handleDetail={(userSelected) => {
+            setDetailUserData(userSelected as UserDetailFormInterface);
+            setUpdateFormState(true);
+          }}
+          handleRestore={() => router.push('members/restore')}
           handleDelete={async(userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
           handleSearch={(query) => setSearchQuery(query)}
         />
@@ -126,6 +142,17 @@ export default function MemberManagement() {
       >
         <CreateNewAccountForm
           onSubmit={(values: RegisterBodyType) => handleCreateNewUser.mutateAsync(values)}
+        />
+      </ModelLayer>
+
+      <ModelLayer
+        isOpen={updateFormState}
+        onClose={() => setUpdateFormState(false)}
+        maxWidth="max-w-3xl"
+      >
+        <UpdateAccountForm
+          data={detailUserData}
+          onUpdateSuccess={async (values: any) => console.log(values)}
         />
       </ModelLayer>
     </div>

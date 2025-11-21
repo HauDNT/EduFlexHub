@@ -1,7 +1,7 @@
 import { EntityManager } from "typeorm";
 import { logColors } from "@/utils/logColors";
 import {Role} from "@/modules/roles/entities/role.entity";
-import {RoleEnum} from "@/database/enums/RoleEnum";
+import {RoleEnum} from "@/database/enums";
 
 export const seedRoles = async (manager: EntityManager): Promise<void> => {
     // Xóa dữ liệu cũ

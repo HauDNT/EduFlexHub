@@ -1,61 +1,17 @@
-import { Theme} from "@/types";
-import React, { FormEvent } from "react";
-
-// Authen
-export interface LoginResponseInterface {
-    role: any;
-    userId: string,
-    username: string,
-    accessToken: string,
-}
-
-// Redux
-interface ReduxUserState {
-    role: any;
-    userId: string,
-    username: string,
-    email: string,
-}
-
-export interface ReduxAuthState {
-    userAuth: ReduxUserState | null,
-    token: string | null,
-}
-
-// Reset password forms steps
-export interface StepResetForm {
-    id: string | number,
-    name: string,
-    fieldsName: string[],
-}
-
-// Theme
-export interface ThemeState {
-    theme: Theme;
-    isInitialized: boolean;
-}
-
-// Form
-export interface FormInterface<T = any> {
-  onSubmit: (formData: T) => Promise<void>;
-  className?: string;
-  onClose?: () => void;
-}
-
-// Model layer
-export interface ModelLayerInterface {
-    isOpen: boolean;
-    onClose: () => void;
-    children: React.ReactNode;
-    className?: string;
-    maxWidth?: string;
-}
-
-export interface SearchbarInterface {
-    placeholder?: string;
-    onSearch: (query: string, searchFields?: string[]) => void;
-    debounceTime?: number;
-}
-
+// Common interfaces
+export * from '@/interfaces/reduxUserState';
+export * from '@/interfaces/reduxAuthState';
+export * from '@/interfaces/stepResetForm';
+export * from '@/interfaces/detailForm';
+export * from '@/interfaces/createForm';
+export * from '@/interfaces/modelLayer';
+export * from '@/interfaces/searchbar';
+export * from '@/interfaces/uploadImageButton';
 export * from '@/interfaces/metaPaginate';
 export * from '@/interfaces/table';
+
+// Item detail data interfaces
+export * from '@/interfaces/entityDetail/userDetailForm';
+
+// Api response interfaces
+export * from '@/interfaces/apiResponse/loginResponse';

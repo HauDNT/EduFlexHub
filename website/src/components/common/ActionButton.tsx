@@ -7,7 +7,7 @@ type ActionButtonType = 'Create' | 'Delete' | 'Restore'
 interface ActionButtonProps {
     action: ActionButtonType;
     icon?: React.ReactNode;
-    handleAction?: () => void;
+    handleAction?: (item: any | null) => void;
     classNames?: string;
 }
 

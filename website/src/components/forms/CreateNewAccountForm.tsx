@@ -11,7 +11,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {FormInterface} from "@/interfaces"
+import {CreateFormInterface} from "@/interfaces"
 import ComponentCard from "@/components/common/ComponentCard"
 import InputField from "@/components/inputs/InputField"
 import CustomButton from "@/components/buttons/CustomButton"
@@ -21,7 +21,7 @@ import {RoleEnum} from "@/enums";
 const CreateNewAccountForm = ({
     className,
     onSubmit,
-}: FormInterface) => {
+}: CreateFormInterface) => {
     const handleSubmit = (values: RegisterBodyType) => {
         onSubmit(values);
     };

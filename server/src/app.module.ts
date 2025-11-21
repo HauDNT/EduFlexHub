@@ -25,9 +25,9 @@ import { VouchersModule } from './modules/vouchers/vouchers.module';
 import { LoggerMiddleware } from './middleware/LoggerMiddleware';
 import { AuthModule } from './modules/auth/auth.module';
 import {APP_FILTER} from "@nestjs/core";
-import {HttpExceptionFilter} from "@/utils/httpExceptionFilter";
 import { MailModule } from './modules/mail/mail.module';
 import {SeedModule} from "@/database/seeds/seed.module";
+import { AllExceptionsFilter } from '@/config/AllExceptionsFilter';
 
 @Module({
     imports: [
@@ -65,7 +65,7 @@ import {SeedModule} from "@/database/seeds/seed.module";
         AppService,
         {
             provide: APP_FILTER,
-            useClass: HttpExceptionFilter,
+            useClass: AllExceptionsFilter,
         },
     ],
 })

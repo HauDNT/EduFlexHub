@@ -20,10 +20,10 @@ import { Role } from '@/modules/roles/entities/role.entity';
 import { SessionsService } from '@/modules/sessions/sessions.service';
 import { AdminLoginDTO } from '@/modules/auth/dto/admin-login-account.dto';
 import { AdminLoginResponseDTO } from '@/modules/auth/dto/admin-login-response.dto';
-import { RoleEnum } from '@/database/enums/RoleEnum';
+import { RoleEnum } from '@/database/enums';
 
 @Injectable()
-export class AuthService {
+class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -92,7 +92,7 @@ export class AuthService {
         userId: user.id,
         username: user.username,
         accessToken: this.jwtService.sign(payload),
-        role: user.role_id.name,
+        role: user.role.name,
       };
     } catch (e) {
       console.log(`Lỗi đăng nhập: ${e.message}`);
@@ -121,7 +121,9 @@ export class AuthService {
         !data.re_password ||
         !data.account_type
       ) {
-        throw new BadRequestException('Thông tin đăng ký tài khoản không hợp lệ');
+        throw new BadRequestException(
+          'Thông tin đăng ký tài khoản không hợp lệ',
+        );
       }
 
       const { username, password, re_password, account_type } = data;
@@ -151,7 +153,7 @@ export class AuthService {
         address: '',
         phone_number: '',
         address_device: '',
-        role_id: role,
+        role: role,
         created_at: new Date(),
       });
 
@@ -254,7 +256,7 @@ export class AuthService {
               userId: existsUser.id,
               email: parseUser.email,
               accessToken: this.jwtService.sign(payload),
-              role: existsUser.role_id.name,
+              role: existsUser.role.name,
             };
           }
         }
@@ -325,7 +327,7 @@ export class AuthService {
           address: '',
           phone_number: '',
           address_device: '',
-          role_id: role,
+          role: role,
           created_at: new Date(),
         });
 
@@ -411,7 +413,7 @@ export class AuthService {
       const user = await this.userRepository.findOne({
         where: {
           username: account.username,
-          role_id: role,
+          role: role,
         },
       });
 
@@ -457,3 +459,5 @@ export class AuthService {
     }
   }
 }
+
+export default AuthService

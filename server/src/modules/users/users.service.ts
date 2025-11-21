@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,8 +12,6 @@ import {
   In,
   Repository,
   UpdateResult,
-  IsNull,
-  Like,
   DataSource,
   DeleteResult,
 } from 'typeorm';
@@ -21,8 +21,11 @@ import { Role } from '@/modules/roles/entities/role.entity';
 import { TableMetaData } from '@/interfaces/table';
 import { getDataWithQueryAndPaginate } from '@/utils/paginateAndSearch';
 import { GetDataWithQueryParamsDTO } from '@/dto';
-import { RoleEnum } from '@/database/enums/RoleEnum';
+import { GenderEnum, RoleEnum } from '@/database/enums';
 import { validateAndGetEntitiesByIds } from '@/utils/validateAndGetEntitiesByIds';
+import { UpdateUserProfileDTO } from '@/modules/users/dto';
+import { deleteFile } from '@/utils/handleFiles';
+import { enumValidation } from '@/utils/enumValidation';
 
 @Injectable()
 export class UsersService {
@@ -101,7 +104,8 @@ export class UsersService {
       ],
       columnsMeta: [
         { key: 'id', displayName: 'ID', type: 'number' },
-        { key: 'username', displayName: 'Tên người dùng', type: 'string' },
+        { key: 'username', displayName: 'Tên tài khoản', type: 'string' },
+        { key: 'fullname', displayName: 'Tên người dùng', type: 'string' },
         { key: 'email', displayName: 'Email', type: 'string' },
         {
           key: 'gender',
@@ -123,8 +127,65 @@ export class UsersService {
           },
         },
       ],
-      where: { role_id: role },
+      where: { role: role },
     });
+  }
+
+  async getAdditionUserData(userId: number) {
+    try {
+      return await this.userRepository.findOne({
+        where: { id: userId },
+        select: ['address', 'phone_number', 'role_id', 'gender'],
+      });
+    } catch (error) {
+      throw new BadRequestException(
+        'Tìm thông tin tài khoản thất bại: ' + error.message,
+      );
+    }
+  }
+
+  async updateProfile(
+    data: UpdateUserProfileDTO,
+    avatar_url: string,
+  ): Promise<User> {
+    try {
+      console.log('Data receive: ', data);
+
+      const {
+        username,
+        email,
+        fullname,
+        address,
+        gender,
+        phone_number,
+        role_id,
+      } = data;
+      const user = await this.userRepository.findOneBy({ username });
+
+      if (!user)
+        throw new NotFoundException('Không tìm thấy thông tin người dùng');
+
+      user.email = email;
+      user.fullname = fullname;
+      user.address = address;
+      user.phone_number = phone_number;
+
+      if (enumValidation(GenderEnum, +gender)) user.gender = +gender;
+      if (enumValidation(RoleEnum, +role_id)) user.role_id = +role_id;
+
+      if (avatar_url) {
+        await deleteFile(user.avatar_url);
+        user.avatar_url = avatar_url;
+      }
+
+      user.updated_at = new Date();
+      return await this.userRepository.save(user);
+    } catch (error) {
+      await deleteFile(avatar_url);
+      throw new BadRequestException(
+        'Cập nhật thông tin tài khoản thất bại: ' + error.message,
+      );
+    }
   }
 
   async softDeleteUsers(userIds: string[]): Promise<UpdateResult> {
@@ -133,16 +194,16 @@ export class UsersService {
     await queryRunner.startTransaction();
 
     try {
-      const users = await validateAndGetEntitiesByIds(
-        this.userRepository,
-        userIds,
+      await validateAndGetEntitiesByIds(this.userRepository, userIds);
+      const softDeleteUsersResult = await queryRunner.manager.update(
+        User,
+        {
+          id: In(userIds),
+        },
+        {
+          deleted_at: Date(),
+        },
       );
-
-      const softDeleteUsersResult = await queryRunner.manager.update(User, {
-        id: In(userIds),
-      },{
-        deleted_at: Date(),
-      });
 
       await queryRunner.commitTransaction();
       return softDeleteUsersResult;
@@ -162,11 +223,7 @@ export class UsersService {
     await queryRunner.startTransaction();
 
     try {
-      const users = await validateAndGetEntitiesByIds(
-        this.userRepository,
-        userIds,
-      );
-
+      await validateAndGetEntitiesByIds(this.userRepository, userIds);
       const deleteUsersResult = await queryRunner.manager.delete(User, {
         id: In(userIds),
       });

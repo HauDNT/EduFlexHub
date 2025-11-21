@@ -5,7 +5,16 @@ import { CompleteModule } from "@/modules/complete_modules/entities/complete_mod
 import { Course } from "@/modules/courses/entities/course.entity";
 import { Role } from "@/modules/roles/entities/role.entity";
 import { Session } from "@/modules/sessions/entities/session.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'users' })
 export class User {
@@ -69,7 +78,10 @@ export class User {
   // role
   @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'role_id' })
-  role_id: Role;
+  role: Role;
+
+  @Column({ name: 'role_id' })
+  role_id: number;
 
   // sessions
   @OneToMany(() => Session, (session) => session.user)
