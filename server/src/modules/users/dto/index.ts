@@ -11,12 +11,6 @@ import {
 import { Type, Transform } from 'class-transformer';
 import { RoleEnum } from '@/database/enums';
 
-export class DeleteUsersDTO {
-  @IsArray()
-  @IsNotEmpty({ message: 'User list id is not empty' })
-  userItemIds: string[];
-}
-
 export class GetUsersDTO {
   @IsOptional()
   @IsString()
@@ -44,11 +38,6 @@ export class GetUsersDTO {
 }
 
 export class UpdateUserProfileDTO {
-  // @IsString({ message: 'Mã tài khoản không hợp lệ' })
-  // @IsNotEmpty({ message: 'Mã tài khoản không được bỏ trống' })
-  // @Transform(({ value }) => String(value))
-  // id: string;
-
   @IsString({ message: 'Tên tài khoản không hợp lệ' })
   @IsNotEmpty({ message: 'Tên tài khoản không hợp lệ' })
   @Transform(({ value }) => String(value))
@@ -58,6 +47,16 @@ export class UpdateUserProfileDTO {
   @IsNotEmpty({ message: 'Họ và tên không hợp lệ' })
   @Transform(({ value }) => String(value))
   fullname: string;
+
+  @IsString()
+  @IsOptional()
+  @Length(8, 50, { message: 'Mật khẩu phải từ 8 đến 50 ký tự' })
+  password: string;
+
+  @IsString()
+  @IsOptional()
+  @Length(8, 50, { message: 'Mật khẩu phải từ 8 đến 50 ký tự' })
+  re_password: string;
 
   @IsString({ message: 'Email không hợp lệ' })
   @IsNotEmpty({ message: 'Email không hợp lệ' })
@@ -85,6 +84,9 @@ export class UpdateUserProfileDTO {
   @Length(1, 1, { message: 'Loại tài khoản không hợp lệ' })
   @Transform(({ value }) => String(value))
   role_id: string;
+
+  @IsOptional()
+  avatar?: Express.Multer.File;
 }
 
 export class DeleteUserDto {

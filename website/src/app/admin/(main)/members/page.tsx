@@ -152,7 +152,13 @@ export default function MemberManagement() {
       >
         <UpdateAccountForm
           data={detailUserData}
-          onUpdateSuccess={async (values: any) => console.log(values)}
+          onUpdateSuccess={async (newUserData: any) => console.log(newUserData)}
+          // onUpdateSuccess={async (newUserData: any) => {
+          //   setData((prev) => ({
+          //     ...prev,
+          //     values: prev.values.map((user) => user.id === newUserData.id ? newUserData : user)
+          //   }))
+          // }}
         />
       </ModelLayer>
     </div>

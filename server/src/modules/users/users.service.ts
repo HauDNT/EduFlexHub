@@ -135,7 +135,7 @@ export class UsersService {
     try {
       return await this.userRepository.findOne({
         where: { id: userId },
-        select: ['address', 'phone_number', 'role_id', 'gender'],
+        select: ['address', 'phone_number', 'role_id', 'gender', 'avatar_url'],
       });
     } catch (error) {
       throw new BadRequestException(
@@ -149,8 +149,6 @@ export class UsersService {
     avatar_url: string,
   ): Promise<User> {
     try {
-      console.log('Data receive: ', data);
-
       const {
         username,
         email,
@@ -181,6 +179,8 @@ export class UsersService {
       user.updated_at = new Date();
       return await this.userRepository.save(user);
     } catch (error) {
+      console.log('Break!!!');
+      
       await deleteFile(avatar_url);
       throw new BadRequestException(
         'Cập nhật thông tin tài khoản thất bại: ' + error.message,

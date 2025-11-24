@@ -10,6 +10,8 @@ export default function UploadImageButton({
     name,
     label,
     callback = async () => {},
+    oldImageExist = false,
+    oldImageUrl = '',
 }: UploadImageButtonInterface) {
     const [imageUrlSelected, setImageUrlSelected] = useState<File | null>(null);
 

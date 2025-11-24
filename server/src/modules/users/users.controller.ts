@@ -62,12 +62,12 @@ export class UsersController {
     return this.authService.registerAccount(data);
   }
 
-  @Put('/update-profile')
+  @Put('/update')
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
         destination: async (req, file, callback) => {
-          const uploadPath = '/uploads/images/avatars';
+          const uploadPath = './uploads/images/avatars';
           try {
             await fs.mkdir(uploadPath, { recursive: true });
             callback(null, uploadPath);

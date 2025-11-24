@@ -14,6 +14,7 @@ import UploadImageButton from "@/components/common/UploadImgButton";
 import {Gender, RoleEnum} from "@/enums";
 import CustomButton from "@/components/buttons/CustomButton";
 import ComponentCard from "@/components/common/ComponentCard";
+import { formDataFromObject } from "@/utils/formDataFromObject";
 
 const UpdateAccountForm = ({
     data: initialUserData,
@@ -43,6 +44,8 @@ const UpdateAccountForm = ({
         try {
             const resData = (await axiosInstance.get<AdditionUserData>(`/users/addition-data?id=${id}`)).data;
 
+            console.log('Addition data: ', resData);
+
             if (resData) {
                 setUserData(prev => ({ ...prev, ...resData }));
             }
@@ -55,9 +58,33 @@ const UpdateAccountForm = ({
         }
     }
 
-    const handleSubmit = async (data: UpdateAccountBodyType) => {
-        console.log('=> Submitting data: ' + JSON.stringify(data));
-        // await onUpdateSuccess();
+    const handleSubmit = async (value: UpdateAccountBodyType) => {
+      try {
+        const formData = formDataFromObject(value);
+
+        const updateResponse = await axiosInstance.put('/users/update', formData, {
+          headers: { 'Content-Type': 'multipart/form-data'}
+        })
+
+        if (updateResponse.data) {
+          setUserData(updateResponse.data);
+
+          toast({
+            title: 'Cập nhật tài khoản quản trị thành công',
+            variant: 'success',
+          });
+
+          console.log('User data: ', userData);
+
+          await onUpdateSuccess?.(userData);
+        }
+      } catch (error) {
+        toast({
+          title: 'Cập nhật tài khoản khu thất bại',
+          description: handleAxiosError(error),
+          variant: 'destructive',
+        });
+      }
     }
 
     useEffect(() => {
@@ -127,7 +154,7 @@ const UpdateAccountForm = ({
                                 name="password"
                                 render={({field}) => (
                                     <FormItem className="col-span-full">
-                                        <FormLabel>Mật khẩu</FormLabel>
+                                        <FormLabel>Mật khẩu mới</FormLabel>
                                         <FormControl>
                                             <InputField
                                                 type="password"
@@ -146,7 +173,7 @@ const UpdateAccountForm = ({
                                 name="re_password"
                                 render={({field}) => (
                                     <FormItem className="col-span-full">
-                                        <FormLabel>Xác nhận mật khẩu</FormLabel>
+                                        <FormLabel>Xác nhận mật khẩu mới</FormLabel>
                                         <FormControl>
                                             <InputField
                                                 type="password"
@@ -294,9 +321,18 @@ const UpdateAccountForm = ({
                     </div>
                     <div className="flex p-2">
                         <CustomButton type="submit" className='!mt-6 w-full' disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? 'Updating...' : 'Submit'}
+                            {form.formState.isSubmitting ? 'Đang cập nhật...' : 'Cập nhật'}
                         </CustomButton>
                     </div>
+
+                    {
+                      /* Tối nay làm nè bạn:
+                        - Chưa cập nhật thì hiển thị nút bình thường. Khi ấn cập nhật mới thì ẩn nút & hiện biểu tượng loading (delay khoảng 2s để tránh spam)
+                        - Hiển thị avatar của người dùng khi đã có sẵn (kèm nút cập nhật mới avatar ở dưới hình này), còn nếu chưa có thì giữ nguyên như hiện tại.
+                        - 
+                      */
+                    }
+
                 </form>
             </Form>
         </ComponentCard>
