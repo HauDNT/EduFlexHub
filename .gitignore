@@ -94,3 +94,6 @@ turbo/
 # NX (if using NX monorepo)
 nx-cache/
 .project.json
+
+# Server
+/server/uploads/
