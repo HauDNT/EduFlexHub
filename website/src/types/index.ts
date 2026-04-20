@@ -18,3 +18,6 @@ export type DashboardCardItem = {
     upOrDown: boolean;
     diffRatio: number;
 }
+
+export * from '@/types/toggleLabelInputFieldType';
+export * from '@/types/toggleLabelInputOptionsDataType';

@@ -18,6 +18,7 @@ import { MetaPaginate, UserDetailFormInterface } from '@/interfaces';
 import { useFetchResource } from '@/hooks/useFetchResource';
 import { useCreateResource } from '@/hooks/useCreateResource';
 import { useSoftDeleteResource } from '@/hooks/useSoftDeleteResource';
+import UpdateEmployeeForm from '@/components/forms/UpdateEmployeeForm';
 
 export default function MemberManagement() {
   const router = useRouter();
@@ -45,13 +46,17 @@ export default function MemberManagement() {
   })
   const [createFormState, setCreateFormState] = useState<boolean>(false)
   const toggleCreateFormState = () => setCreateFormState(prev => !prev)
-  const [updateFormState, setUpdateFormState] = useState<boolean>(false)
+  const [detailFormState, setDetailFormState] = useState<boolean>(false)
   const [detailUserData, setDetailUserData] = useState<UserDetailFormInterface>({
     id: 0,
     username: '',
     email: '',
     fullname: '',
-    gender: '',
+    gender: 0,
+    address: '',
+    avatar_url: '',
+    phone_number: '',
+    role_id: 0,
   });
 
   const handleCreateNewUser = useCreateResource(
@@ -118,8 +123,8 @@ export default function MemberManagement() {
           search={true}
           handleCreate={toggleCreateFormState}
           handleDetail={(userSelected) => {
+            setDetailFormState(true);
             setDetailUserData(userSelected as UserDetailFormInterface);
-            setUpdateFormState(true);
           }}
           handleRestore={() => router.push('members/restore')}
           handleDelete={async(userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
@@ -146,19 +151,13 @@ export default function MemberManagement() {
       </ModelLayer>
 
       <ModelLayer
-        isOpen={updateFormState}
-        onClose={() => setUpdateFormState(false)}
+        isOpen={detailFormState}
+        onClose={() => setDetailFormState(false)}
         maxWidth="max-w-3xl"
       >
-        <UpdateAccountForm
+        <UpdateEmployeeForm
           data={detailUserData}
           onUpdateSuccess={async (newUserData: any) => console.log(newUserData)}
-          // onUpdateSuccess={async (newUserData: any) => {
-          //   setData((prev) => ({
-          //     ...prev,
-          //     values: prev.values.map((user) => user.id === newUserData.id ? newUserData : user)
-          //   }))
-          // }}
         />
       </ModelLayer>
     </div>

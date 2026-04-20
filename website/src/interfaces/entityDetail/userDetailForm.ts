@@ -3,9 +3,9 @@ export interface UserDetailFormInterface {
     username: string;
     email: string;
     fullname: string;
-    address?: string;
-    phone_number?: string;
-    role_id?: string | number;
-    gender: string | number;
-    avatar?: File;
+    address: string;
+    phone_number: string;
+    role_id: number;
+    gender: number;
+    avatar_url: string;
 }
