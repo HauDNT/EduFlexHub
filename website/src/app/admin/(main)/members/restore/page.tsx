@@ -1,0 +1,75 @@
+'use client'
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useToast } from "@/hooks/use-toast";
+import { handleAxiosError } from "@/utils/axiosInstance";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import CustomTable from "@/components/table/CustomTable";
+import CustomPagination from "@/components/common/CustomPagination";
+import { usePaginate } from '@/hooks';
+import { CustomTableData, MetaPaginate } from '@/interfaces';
+import { useFetchResource } from '@/hooks/useFetchResource';
+import { RoleEnum } from '@/enums';
+
+export default function MemberRestore() {
+  const router = useRouter();
+  const { toast } = useToast()
+  const searchParams = useSearchParams()
+  const type = searchParams.get('type') ?? ''
+  const [meta, setMeta] = useState<MetaPaginate>({ totalPages: 1, currentPage: 1, limit: 10 });
+  const [searchQuery, setSearchQuery] = useState("")
+  const searchFields = "username, email"
+  const [data, setData] = useState<CustomTableData>({
+    columns: [],
+    values: [],
+  })
+  const { data: cachedData } = useFetchResource({
+    resource: 'users',
+    page: meta.currentPage,
+    limit: meta.limit,
+    queryString: searchQuery,
+    searchFields,
+    type: +type,
+    isRestoreFetch: true,
+  })
+  const { handlePrevPage, handleNextPage, handleClickPage } = usePaginate({
+    meta,
+    setMetaCallback: setMeta,
+  })
+
+  useEffect(() => {
+    if (cachedData) {
+      setData({
+        columns: cachedData.columns,
+        values: cachedData.values,
+      });
+
+      setMeta((prev) => ({
+        ...prev,
+        totalPages: cachedData.meta.totalPages,
+        currentPage: cachedData.meta.currentPage,
+      }));
+    }
+  }, [cachedData, type]);
+
+  return (
+    <div>
+      <PageBreadcrumb pageTitle={RoleEnum[+type].charAt(0).toUpperCase() + RoleEnum[+type].slice(1)} />
+
+      <div className='space-y-6'>
+        <CustomTable
+          tableTitle={''}
+          tableData={data}
+          deleteItem={true}
+          restoreItem={true}
+          search={true}
+          // handleRestore={() => router.push('members/restore')}
+          // handleDelete={async (userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
+          handleSearch={(query) => setSearchQuery(query)}
+        />
+      </div>
+    </div>
+  )
+}

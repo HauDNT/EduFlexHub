@@ -14,6 +14,8 @@ import {
   UpdateResult,
   DataSource,
   DeleteResult,
+  Not,
+  IsNull,
 } from 'typeorm';
 import { ResetPasswordDTO } from '@/modules/auth/dto/forgot-password.dto';
 import { hashPassword } from '@/utils/bcrypt';
@@ -125,7 +127,63 @@ export class UsersService {
           },
         },
       ],
-      where: { role: role },
+      where: { role: role, deleted_at: IsNull() },
+    });
+  }
+
+  async getUsersDeletedByTypeAndQuery(
+    data: GetDataWithQueryParamsDTO,
+    type: RoleEnum,
+  ): Promise<TableMetaData<User>> {
+    const { page, limit, queryString, searchFields } = data;
+    const role = await this.roleRepository.findOneBy({ id: type });
+
+    if (!role) {
+      throw new UnauthorizedException('Loại tài khoản không hợp lệ');
+    }
+
+    return await getDataWithQueryAndPaginate<User>({
+      repository: this.userRepository,
+      page,
+      limit,
+      queryString,
+      searchFields: searchFields ? searchFields.split(',') : [],
+      selectFields: [
+        'id',
+        'username',
+        'fullname',
+        'email',
+        'gender',
+        'is_online',
+        'deleted_at',
+      ],
+      columnsMeta: [
+        { key: 'id', displayName: 'ID', type: 'number' },
+        { key: 'username', displayName: 'Tên tài khoản', type: 'string' },
+        { key: 'fullname', displayName: 'Tên người dùng', type: 'string' },
+        { key: 'email', displayName: 'Email', type: 'string' },
+        {
+          key: 'gender',
+          displayName: 'Giới tính',
+          type: 'number',
+          valueMapping: {
+            1: 'Nam',
+            2: 'Nữ',
+            3: 'Không xác định',
+          },
+        },
+        {
+          key: 'is_online',
+          displayName: 'Trạng thái online',
+          type: 'boolean',
+          valueMapping: {
+            true: 'Đang online',
+            false: 'Offline',
+          },
+        },
+        { key: 'deleted_at', displayName: 'Thời điểm xoá', type: 'string' },
+      ],
+      where: { role: role, deleted_at: Not(IsNull()) },
     });
   }
 

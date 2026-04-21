@@ -7,6 +7,7 @@ type FetchResourceParams = {
   limit?: number;
   queryString?: string;
   searchFields?: string;
+  isRestoreFetch?: boolean;
   [key: string]: any;
 };
 
@@ -16,6 +17,7 @@ export const useFetchResource = ({
   limit = 10,
   queryString = '',
   searchFields = '',
+  isRestoreFetch = false,
   ...restParams
 }: FetchResourceParams) => {
   const queryKey = [
@@ -24,14 +26,17 @@ export const useFetchResource = ({
     limit,
     queryString,
     searchFields,
+    isRestoreFetch,
     ...Object.entries(restParams).map(([key, value]) => `${key}:${value}`),
   ];
 
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await axiosInstance.get(`/${resource}`, {
-        params: { page, limit, queryString, searchFields, ...restParams, },
+      const endpoint = isRestoreFetch ? `/${resource}/restore` : `/${resource}`;
+
+      const response = await axiosInstance.get(endpoint, {
+        params: { page, limit, queryString, searchFields, ...restParams },
       });
 
       return response.data;

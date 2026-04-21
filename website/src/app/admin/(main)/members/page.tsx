@@ -125,7 +125,7 @@ export default function MemberManagement() {
             setDetailFormState(true);
             setDetailUserData(userSelected as UserDetailFormInterface);
           }}
-          handleRestore={() => router.push('members/restore')}
+          handleRestore={() => router.push(`members/restore?type=${+type}`)}
           handleDelete={async(userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
           handleSearch={(query) => setSearchQuery(query)}
         />

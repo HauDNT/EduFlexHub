@@ -12,10 +12,10 @@ export async function getDataWithQueryAndPaginate<Entity>(
         searchFields,
         selectFields,
         columnsMeta,
-        where = { deleted_at: IsNull() } as unknown as FindOptionsWhere<Entity>,
+        where = { } as unknown as FindOptionsWhere<Entity>,
     } = options;
 
-    const whereCondition = { ...where, deleted_at: IsNull() };
+    const whereCondition = { ...where };
     const skip = (page - 1) * limit;
     const take = limit;
 
@@ -31,7 +31,6 @@ export async function getDataWithQueryAndPaginate<Entity>(
     const [values, total] = await repository.findAndCount({
         where: searchConditions.length > 0 ? searchConditions.map(sc => ({
             ...sc,
-            deleted_at: IsNull(),
         })) : whereCondition,
         select: selectFields as (keyof Entity)[],
         skip,

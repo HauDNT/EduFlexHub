@@ -52,6 +52,27 @@ export class UsersController {
     );
   }
 
+  @Get('/restore')
+  async getUsersDeletedByTypeAndQuery(
+    @Query('type') type: RoleEnum,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('queryString') queryString: string,
+    @Query('searchFields') searchFields: string,
+  ): Promise<TableMetaData<User>> {
+    if (!Object.values(RoleEnum).includes(type)) {
+      throw new BadRequestException({
+        message: 'Loại tài khoản không hợp lệ',
+        status: 400,
+      });
+    }
+
+    return await this.usersService.getUsersDeletedByTypeAndQuery(
+      { page, limit, queryString, searchFields },
+      type,
+    );
+  }
+
   @Get('/addition-data')
   async getAdditionUserData(@Query('id') userId: number): Promise<any> {
     return await this.usersService.getAdditionUserData(userId);
