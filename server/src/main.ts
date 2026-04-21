@@ -11,7 +11,7 @@ import { join } from 'path';
 import * as requestIp from 'request-ip';
 import * as express from 'express';
 import cookieParser from 'cookie-parser';
-import {SeedService} from "@/database/seeds/seed.service";
+// import {SeedService} from "@/database/seeds/seed.service";
 import { AllExceptionsFilter } from '@/config/AllExceptionsFilter';
 
 async function bootstrap() {
