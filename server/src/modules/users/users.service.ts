@@ -65,8 +65,6 @@ export class UsersService {
         password: hashedPassword,
       });
     } catch (e) {
-      console.log('Reset password error: ', e.message);
-
       if (e instanceof HttpException) {
         throw e;
       }
@@ -139,7 +137,8 @@ export class UsersService {
       });
     } catch (error) {
       throw new BadRequestException(
-        'Tìm thông tin tài khoản thất bại: ' + error.message,
+        'Tìm thông tin tài khoản thất bại: ' + error,
+        // 'Tìm thông tin tài khoản thất bại: ' + error.message,
       );
     }
   }
@@ -179,11 +178,10 @@ export class UsersService {
       user.updated_at = new Date();
       return await this.userRepository.save(user);
     } catch (error) {
-      console.log('Break!!!');
-      
       await deleteFile(avatar_url);
       throw new BadRequestException(
-        'Cập nhật thông tin tài khoản thất bại: ' + error.message,
+        'Cập nhật thông tin tài khoản thất bại: ' + error,
+        // 'Cập nhật thông tin tài khoản thất bại: ' + error.message,
       );
     }
   }
@@ -210,7 +208,8 @@ export class UsersService {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException(
-        'Xoá danh sách tài khoản thất bại: ' + error.message,
+        'Xoá danh sách tài khoản thất bại: ' + error,
+        // 'Xoá danh sách tài khoản thất bại: ' + error.message,
       );
     } finally {
       await queryRunner.release();
@@ -237,7 +236,8 @@ export class UsersService {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException(
-        'Xoá danh sách tài khoản thất bại: ' + error.message,
+        'Xoá danh sách tài khoản thất bại: ' + error,
+        // 'Xoá danh sách tài khoản thất bại: ' + error.message,
       );
     } finally {
       await queryRunner.release();

@@ -8,7 +8,6 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import CustomTable from "@/components/table/CustomTable";
 import CustomPagination from "@/components/common/CustomPagination";
 import CreateNewAccountForm from "@/components/forms/CreateNewAccountForm";
-import UpdateAccountForm from "@/components/forms/UpdateAccountForm";
 import ModelLayer from "@/components/common/ModelLayer";
 import { RegisterBodyType } from "@/schemas/auth.schema";
 import { RoleEnum } from "@/enums";
@@ -157,7 +156,12 @@ export default function MemberManagement() {
       >
         <UpdateEmployeeForm
           data={detailUserData}
-          onUpdateSuccess={async (newUserData: any) => console.log(newUserData)}
+          onUpdateSuccess={async (newUserData: any) => {
+            setData((prev) => ({
+              ...prev,
+              values: prev.values.map((user) => user.id === newUserData.id ? newUserData : user)
+            }))
+          }}
         />
       </ModelLayer>
     </div>

@@ -32,8 +32,6 @@ const UpdateEmployeeForm = ({
     try {
       const resData = (await axiosInstance.get<AdditionUserData>(`/users/addition-data?id=${id}`)).data;
 
-      console.log('Addition data: ', resData)
-
       if (resData) {
         setUserData(prev => ({ ...prev, ...resData }));
       }
@@ -49,12 +47,11 @@ const UpdateEmployeeForm = ({
   const handleUpdateProfile = async (): Promise<void> => {
     try {
       const form = new FormData();
-      form.append('id', userData.id.toString());
       form.append('username', userData.username);
       form.append('email', userData.email);
       form.append('fullname', userData.fullname);
       form.append('address', userData.address);
-      form.append('phone_nummber', userData.phone_number);
+      form.append('phone_number', userData.phone_number);
       form.append('role_id', userData.role_id.toString());
       form.append('gender', userData.gender.toString());
 
@@ -62,7 +59,21 @@ const UpdateEmployeeForm = ({
         form.append('avatar', newImageFile);
       };
 
-      console.log(form);
+      const updateResult = await axiosInstance.put(
+        '/users/update', 
+        form,
+        { headers: { 'Content-Type': 'multipart/form-data' } },
+      );
+
+      if (updateResult.data) {
+        toast({
+          title: `Cập nhật thông tin nhân viên ${userData.fullname} thành công`,
+          variant: "success",
+        });
+
+        await onUpdateSuccess?.(userData);
+      };
+
     } catch (error) {
       toast({
         title: 'Cập nhật tài khoản thất bại',
@@ -281,29 +292,31 @@ const UpdateEmployeeForm = ({
             </div>
             {
               editState &&
-              <div className="mt-6 grid grid-cols-1">
-                  <div>
-                    <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                      Chọn hình ảnh mới
-                    </p>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      className="w-full mb-0"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
+              <>
+                <div className="mt-6 grid grid-cols-1">
+                    <div>
+                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                        Chọn hình ảnh mới
+                      </p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        className="w-full mb-0"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
 
-                        if (file) {
-                          setNewImageFile(file);
-                          setUserData(prev => ({
-                            ...prev,
-                            avatar_url: URL.createObjectURL(file)
-                          }));
-                        }
-                      }}
-                    />
-                  </div>
-              </div>
+                          if (file) {
+                            setNewImageFile(file);
+                            setUserData(prev => ({
+                              ...prev,
+                              avatar_url: URL.createObjectURL(file)
+                            }));
+                          }
+                        }}
+                      />
+                    </div>
+                </div>
+              </>
             }
           </div>
         </div>
