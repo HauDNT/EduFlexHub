@@ -8,12 +8,14 @@ export interface TableProps {
     createItem?: boolean;
     detailItem?: boolean;
     deleteItem?: boolean;
-    search?: boolean;
+    navigateToRestore?: boolean;
     restoreItem?: boolean;
+    search?: boolean;
     handleCreate?: () => void;
     handleDetail?: (item: Record<string, any>) => void;
     handleDelete?: (item: any) => Promise<void>;
-    handleRestore?: () => void;
+    handleNavigateToRestore?: () => void;
+    handleRestore?: (item: any) => Promise<void>;
     handleSearch?: (item: any) => void;
 }
 

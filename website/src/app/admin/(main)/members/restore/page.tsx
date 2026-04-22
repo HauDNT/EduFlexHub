@@ -12,6 +12,7 @@ import { usePaginate } from '@/hooks';
 import { CustomTableData, MetaPaginate } from '@/interfaces';
 import { useFetchResource } from '@/hooks/useFetchResource';
 import { RoleEnum } from '@/enums';
+import { useRestoreResource } from '@/hooks/useRestoreResource';
 
 export default function MemberRestore() {
   const router = useRouter();
@@ -39,6 +40,24 @@ export default function MemberRestore() {
     setMetaCallback: setMeta,
   })
 
+  const handleRestoreUsers = useRestoreResource(
+    'users',
+    'userIds',
+    () => {
+      toast({
+        title: `Đã khôi phục tài khoản người dùng thành công`,
+        variant: 'success',
+      });
+    },
+    (error) => {
+      toast({
+        title: 'Khôi phục tài khoản người dùng thất bại',
+        description: handleAxiosError(error),
+        variant: 'destructive',
+      });
+    },
+  )
+
   useEffect(() => {
     if (cachedData) {
       setData({
@@ -65,11 +84,19 @@ export default function MemberRestore() {
           deleteItem={true}
           restoreItem={true}
           search={true}
-          // handleRestore={() => router.push('members/restore')}
-          // handleDelete={async (userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
+          handleRestore={async (userSelected) => handleRestoreUsers.mutateAsync(userSelected)}
+          handleDelete={async (userSelected) => console.log(userSelected)}
           handleSearch={(query) => setSearchQuery(query)}
         />
       </div>
+
+      <CustomPagination
+        currentPage={meta.currentPage}
+        totalPages={meta.totalPages}
+        handlePreviousPage={handlePrevPage}
+        handleNextPage={handleNextPage}
+        handleClickPage={handleClickPage}
+      />
     </div>
   )
 }

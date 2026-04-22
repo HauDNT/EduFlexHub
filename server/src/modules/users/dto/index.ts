@@ -89,8 +89,8 @@ export class UpdateUserProfileDTO {
   avatar?: Express.Multer.File;
 }
 
-export class DeleteUserDto {
+export class UserIdDto {
   @IsArray()
   @IsNotEmpty({ message: 'Danh sách id tài khoản người dùng không hợp lệ' })
-  userIds: string[];
+  userIds: number[];
 }

@@ -118,14 +118,14 @@ export default function MemberManagement() {
           createItem={true}
           detailItem={true}
           deleteItem={true}
-          restoreItem={true}
+          navigateToRestore={true}
           search={true}
           handleCreate={toggleCreateFormState}
           handleDetail={(userSelected) => {
             setDetailFormState(true);
             setDetailUserData(userSelected as UserDetailFormInterface);
           }}
-          handleRestore={() => router.push(`members/restore?type=${+type}`)}
+          handleNavigateToRestore={() => router.push(`members/restore?type=${+type}`)}
           handleDelete={async(userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
           handleSearch={(query) => setSearchQuery(query)}
         />

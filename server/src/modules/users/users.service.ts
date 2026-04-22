@@ -154,7 +154,6 @@ export class UsersService {
         'fullname',
         'email',
         'gender',
-        'is_online',
         'deleted_at',
       ],
       columnsMeta: [
@@ -170,15 +169,6 @@ export class UsersService {
             1: 'Nam',
             2: 'Nữ',
             3: 'Không xác định',
-          },
-        },
-        {
-          key: 'is_online',
-          displayName: 'Trạng thái online',
-          type: 'boolean',
-          valueMapping: {
-            true: 'Đang online',
-            false: 'Offline',
           },
         },
         { key: 'deleted_at', displayName: 'Thời điểm xoá', type: 'string' },
@@ -242,7 +232,7 @@ export class UsersService {
     }
   }
 
-  async softDeleteUsers(userIds: string[]): Promise<UpdateResult> {
+  async softDeleteUsers(userIds: number[]): Promise<UpdateResult> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -271,7 +261,34 @@ export class UsersService {
     }
   }
 
-  async forceDeleteUsers(userIds: string[]): Promise<DeleteResult> {
+  async restoreUsers(userIds: number[]): Promise<UpdateResult> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await validateAndGetEntitiesByIds(this.userRepository, userIds);
+      // await validateAndGetEntitiesByIds(this.userRepository, userIds, { deleted_at: Not(IsNull())});
+      
+      const restoreUsersResult = await queryRunner.manager.update(
+        User, 
+        { id: In(userIds) },
+        { deleted_at: null }
+      );
+
+      await queryRunner.commitTransaction();
+      return restoreUsersResult;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(
+        'Khôi phục tài khoản thất bại'
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async forceDeleteUsers(userIds: number[]): Promise<DeleteResult> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

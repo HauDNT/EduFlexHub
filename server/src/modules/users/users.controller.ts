@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Patch,
   Post,
   Put,
   Query,
@@ -16,7 +17,7 @@ import { extname } from 'path';
 import { UsersService } from './users.service';
 import { User } from '@/modules/users/entities/user.entity';
 import { TableMetaData } from '@/interfaces/table';
-import { DeleteUserDto, UpdateUserProfileDTO } from '@/modules/users/dto';
+import { UserIdDto, UpdateUserProfileDTO } from '@/modules/users/dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { RoleEnum } from '@/database/enums';
 import { RegisterDTO } from '@/modules/auth/dto/register.dto';
@@ -134,13 +135,19 @@ export class UsersController {
   }
 
   @Delete('/soft-delete')
-  async softDeleteUsers(@Body() data: DeleteUserDto): Promise<UpdateResult> {
+  async softDeleteUsers(@Body() data: UserIdDto): Promise<UpdateResult> {
     const { userIds } = data;
     return await this.usersService.softDeleteUsers(userIds);
   }
 
+  @Patch('/restore')
+  async restoreUsers(@Body() data: UserIdDto): Promise<UpdateResult> {
+    const { userIds } = data;
+    return await this.usersService.restoreUsers(userIds);
+  }
+
   @Delete('/force-delete')
-  async deleteUsers(@Body() data: DeleteUserDto): Promise<DeleteResult> {
+  async deleteUsers(@Body() data: UserIdDto): Promise<DeleteResult> {
     const { userIds } = data;
     return await this.usersService.forceDeleteUsers(userIds);
   }
