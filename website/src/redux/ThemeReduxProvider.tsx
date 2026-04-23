@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useThemeSelector, useThemeDispatch } from "@/hooks/useTheme";
+import { useThemeSelector, useThemeDispatch } from "@/hooks";
 import { initializeTheme } from "@/redux/themeSlice";
 
 export const ThemeReduxProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

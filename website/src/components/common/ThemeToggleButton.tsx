@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeDispatch } from "@/hooks/useTheme";
+import { useThemeDispatch } from "@/hooks";
 import { toggleTheme } from "@/redux/themeSlice";
 
 export const ThemeToggleButton: React.FC = () => {

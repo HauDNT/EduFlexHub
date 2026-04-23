@@ -11,6 +11,7 @@ export * from '@/interfaces/metaPaginate';
 export * from '@/interfaces/table';
 export * from '@/interfaces/uploadImageButton';
 export * from '@/interfaces/toggleLabelInput';
+export * from '@/interfaces/table';
 
 // Item detail data interfaces
 export * from '@/interfaces/entityDetail/userDetailForm';

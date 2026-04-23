@@ -1,18 +1,15 @@
 'use client'
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks";
 import { CheckCircle, Edit } from "lucide-react";
 import ComponentCard from "@/components/common/ComponentCard";
-import axiosInstance, { handleAxiosError } from "@/utils/axiosInstance";
+import { axiosInstance, handleAxiosError, getValidImageUrl, onChangeDataEachFieldChange, enumToOptions } from "@/utils";
 import { DetailFormInterface, UserDetailFormInterface } from "@/interfaces";
 import { AdditionUserData } from "@/interfaces/entityDetail/additionUserData";
-import { getValidImageUrl } from "@/utils/displayImageUrlSwitchBlob";
 import ToggleLabelInput from "@/components/common/ToggleLabelInput";
-import { onChangeDataEachFieldChange } from "@/utils/onChangeDataEachFieldChange";
 import { Gender, RoleEnum } from "@/enums";
 import { GENDER_LABELS, ROLE_LABELS } from "@/constants"
-import { enumToOptions } from "@/utils/enumToOptions";
 import { Input } from "@/components/ui/input";
 
 const genderOptions = enumToOptions(Gender, GENDER_LABELS);
@@ -60,7 +57,7 @@ const UpdateEmployeeForm = ({
       };
 
       const updateResult = await axiosInstance.put(
-        '/users/update', 
+        '/users/update',
         form,
         { headers: { 'Content-Type': 'multipart/form-data' } },
       );
@@ -294,27 +291,27 @@ const UpdateEmployeeForm = ({
               editState &&
               <>
                 <div className="mt-6 grid grid-cols-1">
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Chọn hình ảnh mới
-                      </p>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        className="w-full mb-0"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
+                  <div>
+                    <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                      Chọn hình ảnh mới
+                    </p>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="w-full mb-0"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
 
-                          if (file) {
-                            setNewImageFile(file);
-                            setUserData(prev => ({
-                              ...prev,
-                              avatar_url: URL.createObjectURL(file)
-                            }));
-                          }
-                        }}
-                      />
-                    </div>
+                        if (file) {
+                          setNewImageFile(file);
+                          setUserData(prev => ({
+                            ...prev,
+                            avatar_url: URL.createObjectURL(file)
+                          }));
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
               </>
             }

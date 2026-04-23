@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
-export const handleAxiosError = (error) => {
+export const handleAxiosError = (error: unknown) => {
     if (axios.isAxiosError(error) && error.response) {
         return error.response.data.description || "Axios error fetch API (No description)";
     }

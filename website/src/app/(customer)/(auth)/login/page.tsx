@@ -1,4 +1,4 @@
-import LoginForm from "@/app/(customer)/(auth)/login/login-form";
+import LoginForm from "@/components/forms/LoginForm";
 import imagePath from '../../../../assets/images/login_bg.jpg';
 
 export default function LoginPage() {

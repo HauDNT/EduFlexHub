@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { useToast } from "@/hooks/use-toast";
-import { handleAxiosError } from "@/utils/axiosInstance";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import CustomTable from "@/components/table/CustomTable";
 import CustomPagination from "@/components/common/CustomPagination";
@@ -11,12 +9,9 @@ import CreateNewAccountForm from "@/components/forms/CreateNewAccountForm";
 import ModelLayer from "@/components/common/ModelLayer";
 import { RegisterBodyType } from "@/schemas/auth.schema";
 import { RoleEnum } from "@/enums";
-import { CustomTableData } from '@/interfaces/table';
-import { usePaginate } from '@/hooks';
-import { MetaPaginate, UserDetailFormInterface } from '@/interfaces';
-import { useFetchResource } from '@/hooks/useFetchResource';
-import { useCreateResource } from '@/hooks/useCreateResource';
-import { useSoftDeleteResource } from '@/hooks/useSoftDeleteResource';
+import { handleAxiosError } from "@/utils";
+import { useToast, usePaginate, useFetchResource, useCreateResource, useSoftDeleteResource } from '@/hooks';
+import { MetaPaginate, UserDetailFormInterface, CustomTableData } from '@/interfaces';
 import UpdateEmployeeForm from '@/components/forms/UpdateEmployeeForm';
 
 export default function MemberManagement() {

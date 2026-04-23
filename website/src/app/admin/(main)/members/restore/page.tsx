@@ -3,16 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { useToast } from "@/hooks/use-toast";
 import { handleAxiosError } from "@/utils/axiosInstance";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import CustomTable from "@/components/table/CustomTable";
 import CustomPagination from "@/components/common/CustomPagination";
-import { usePaginate } from '@/hooks';
+import { useToast, usePaginate, useFetchResource, useRestoreResource } from '@/hooks';
 import { CustomTableData, MetaPaginate } from '@/interfaces';
-import { useFetchResource } from '@/hooks/useFetchResource';
 import { RoleEnum } from '@/enums';
-import { useRestoreResource } from '@/hooks/useRestoreResource';
 
 export default function MemberRestore() {
   const router = useRouter();

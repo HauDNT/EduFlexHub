@@ -1,4 +1,4 @@
-import RegisterForm from "@/app/(customer)/(auth)/register/register-form";
+import RegisterForm from "@/components/forms/RegisterForm";
 import imagePath from '../../../../assets/images/login_bg.jpg';
 
 export default function RegisterPage() {

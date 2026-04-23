@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axiosInstance from '@/utils/axiosInstance';
+import { axiosInstance } from '@/utils';
 
 export const useSoftDeleteResource = (
   resource: string,
