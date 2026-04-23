@@ -23,11 +23,6 @@ import * as FormSchema from "@/schemas/reset-password-form.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import {
-  VerifyCodeFormSchema,
-  VerifyEmailFormSchema,
-  ChangePasswordFormSchema,
-} from "@/schemas/reset-password-form.schema";
 import { axiosInstance, handleAxiosError } from "@/utils";
 import { HttpStatusCode } from "axios";
 
@@ -81,8 +76,8 @@ const ForgotPasswordForm: React.FC = () => {
     }
   })
 
-  const handleSubmitEmail = async (data: VerifyEmailFormSchema) => {
-    if (data) {
+  const handleSubmitEmail = async (data: FormSchema.VerifyEmailFormSchemaType) => {
+    try {
       const checkEmail = await axiosInstance.post('/auth/verify-email', data);
 
       if (checkEmail.data === true) {
@@ -99,46 +94,36 @@ const ForgotPasswordForm: React.FC = () => {
           variant: "destructive",
         });
       }
-    } else {
-      toast({
-        title: "Vui lòng điền email",
-        variant: "destructive",
-      });
+    } catch (error) {
+      const errorMessage = handleAxiosError(error);
+      toast({ title: "Gửi email thất bại", description: errorMessage, variant: "destructive" });
     }
   }
 
-  const handleVerifyCode = async (data: VerifyCodeFormSchema) => {
+  const handleVerifyCode = async (data: FormSchema.VerifyCodeFormSchemaType) => {
     try {
-      if (data) {
-        const verifyCodeResult = await axiosInstance.post(
-          '/auth/otp-authentication',
-          {
-            email: validEmail,
-            verifyCode: data.verifyCode,
-          });
+      const verifyCodeResult = await axiosInstance.post(
+        '/auth/otp-authentication',
+        {
+          email: validEmail,
+          verifyCode: data.verifyCode,
+        });
 
-        if (verifyCodeResult.data === true) {
-          toast({
-            title: "Xác thực thành công, bạn có thể tạo mật khẩu mới.",
-          });
-
-          setCurrentStep(currentStep => currentStep + 1);
-        }
-        else {
-          toast({
-            title: "Mã OTP không chính xác, vui lòng kiểm tra lại",
-            variant: "destructive",
-          });
-        }
-      } else {
+      if (verifyCodeResult.data === true) {
         toast({
-          title: "Vui lòng điền mã OTP",
+          title: "Xác thực thành công, bạn có thể tạo mật khẩu mới.",
+        });
+
+        setCurrentStep(currentStep => currentStep + 1);
+      }
+      else {
+        toast({
+          title: "Mã OTP không chính xác, vui lòng kiểm tra lại",
           variant: "destructive",
         });
       }
     } catch (error) {
       const errorMessage = handleAxiosError(error);
-
       toast({
         title: "Xác thực OTP thất bại",
         description: errorMessage,
@@ -148,16 +133,8 @@ const ForgotPasswordForm: React.FC = () => {
 
   }
 
-  const handleChangePassword = async (data: ChangePasswordFormSchema) => {
+  const handleChangePassword = async (data: FormSchema.ChangePasswordFormSchemaType) => {
     try {
-      if (!data && !validEmail) {
-        toast({
-          title: "Vui lòng điền đẩy đủ thông tin",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const changePasswordResult = await axiosInstance
         .post(
           '/auth/reset-password',
@@ -167,8 +144,6 @@ const ForgotPasswordForm: React.FC = () => {
             re_password: data.re_password,
           });
 
-      console.log(changePasswordResult)
-
       if (changePasswordResult.status === HttpStatusCode.Created) {
         toast({
           title: "Đổi mật khẩu thành công",
@@ -176,7 +151,6 @@ const ForgotPasswordForm: React.FC = () => {
 
         setCurrentStep(currentStep => currentStep + 1);
       }
-
     } catch (error) {
       const errorMessage = handleAxiosError(error);
 
@@ -197,9 +171,9 @@ const ForgotPasswordForm: React.FC = () => {
             <li key={index} className="flex-1">
               <div
                 className={`
-                                    border-l-2 border-t-0 pl-4 pt-0 border-solid 
-                                    ${currentStep === index ? 'border-indigo-600' : 'border-indigo-200'}
-                                    font-medium lg:border-t-2 lg:border-l-0 lg:pl-0`}>
+                  border-l-2 border-t-0 pl-4 pt-0 border-solid 
+                  ${currentStep === index ? 'border-indigo-600' : 'border-indigo-200'}
+                  font-medium lg:border-t-2 lg:border-l-0 lg:pl-0`}>
                 <span className="text-sm lg:text-base text-indigo-600">
                   {step.id}
                 </span>
@@ -244,8 +218,7 @@ const ForgotPasswordForm: React.FC = () => {
                 <Controller
                   name="verifyCode"
                   control={verifyCodeForm.control}
-                  rules={VerifyCodeFormSchema}
-                  render={({ field, fieldState }) => (
+                  render={({ field }) => (
                     <div className='flex justify-center'>
                       <InputOTP
                         maxLength={6}

@@ -20,6 +20,6 @@ export const ChangePasswordFormSchema = z
     })
     .strict()
 
-export type VerifyEmailFormSchemaType = z.TypeOf<typeof VerifyEmailFormSchema>
-export type VerifyCodeFormSchemaType = z.TypeOf<typeof VerifyCodeFormSchema>
-export type ChangePasswordFormSchemaType = z.TypeOf<typeof ChangePasswordFormSchema>
+export type VerifyEmailFormSchemaType = z.infer<typeof VerifyEmailFormSchema>
+export type VerifyCodeFormSchemaType = z.infer<typeof VerifyCodeFormSchema>
+export type ChangePasswordFormSchemaType = z.infer<typeof ChangePasswordFormSchema>
