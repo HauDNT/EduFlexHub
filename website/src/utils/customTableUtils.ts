@@ -1,5 +1,5 @@
 import { CustomTableColumn } from "@/interfaces/table"
-import {Gender} from "@/enums";
+import {GenderEnum} from "@/enums";
 
 export const renderCellValues = (col: CustomTableColumn, value: any): string => {
     if (col.valueMapping) {
@@ -16,9 +16,9 @@ export const renderCellValues = (col: CustomTableColumn, value: any): string => 
             return value !== undefined && value !== null ? value.toString() : "-";
         case "gender":
             switch (parseInt(value)) {
-                case Gender.Male: return "Nam";
-                case Gender.Female: return "Nữ";
-                case Gender.Other: return "Khác";
+                case GenderEnum.Male: return "Nam";
+                case GenderEnum.Female: return "Nữ";
+                case GenderEnum.Other: return "Khác";
                 default: return "Không xác định";
             }
         case "string":

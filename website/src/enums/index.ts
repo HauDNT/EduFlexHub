@@ -5,7 +5,7 @@ export enum RoleEnum {
     Student = 4,
 }
 
-export enum Gender {
+export enum GenderEnum {
     Male = 1,
     Female = 2,
     Other = 3,

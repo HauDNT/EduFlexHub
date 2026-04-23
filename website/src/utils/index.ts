@@ -5,4 +5,4 @@ export * from '@/utils/customTableUtils';
 export * from '@/utils/displayImageUrlSwitchBlob';
 export * from '@/utils/enumToOptions';
 export * from '@/utils/formDataFromObject';
-export * from '@/utils/onChangeDataEachFieldChange';
+export * from '@/utils/createFieldChangeHandler';
