@@ -33,14 +33,14 @@ import { useRouter } from "next/navigation";
 
 const HeaderAvatar = ({ uri }: { uri?: string }) => {
   const defaultAvatar = "https://img.freepik.com/premium-vector/businessman-avatar-illustration-cartoon-user-portrait-user-profile-icon_118339-5502.jpg?w=740";
-  const { user, token } = useSelector((state: RootState) => state.auth)
+  const { userAuth, token } = useSelector((state: RootState) => state.auth)
   const dispatch = useDispatch()
   const { toast } = useToast()
   const router = useRouter()
 
   const handleLogout = async () => {
-    const userIdentifier = user['username'] || user['email'];
-    const userRole = user['role'];
+    const userIdentifier = userAuth?.['username'] || userAuth?.['email'];
+    const userRole = userAuth?.['role'];
 
     const logoutResult = await axiosInstance.post(
       '/auth/logout',
