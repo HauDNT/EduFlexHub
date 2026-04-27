@@ -69,7 +69,7 @@ export default function MemberManagement() {
     },
   )
 
-  const handleDeleteUsers = useSoftDeleteResource(
+  const handleSoftDeleteUsers = useSoftDeleteResource(
     'users',
     'userIds',
     () => {
@@ -121,7 +121,7 @@ export default function MemberManagement() {
             setDetailUserData(userSelected as UserDetailFormInterface);
           }}
           handleNavigateToRestore={() => router.push(`members/restore?type=${+type}`)}
-          handleDelete={async(userSelected) => handleDeleteUsers.mutateAsync(userSelected)}
+          handleDelete={async(userSelected) => handleSoftDeleteUsers.mutateAsync(userSelected)}
           handleSearch={(query) => setSearchQuery(query)}
         />
       </div>

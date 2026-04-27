@@ -95,8 +95,6 @@ class AuthService {
         role: user.role.name,
       };
     } catch (e) {
-      console.log(`Lỗi đăng nhập: ${e.message}`);
-
       if (e instanceof HttpException) {
         throw e;
       }
@@ -153,6 +151,7 @@ class AuthService {
         address: '',
         phone_number: '',
         address_device: '',
+        avatar_url: '',
         role: role,
         created_at: new Date(),
       });
@@ -176,6 +175,8 @@ class AuthService {
       if (e instanceof HttpException) {
         throw e;
       }
+
+      console.log('Mã lỗi: ', e);
 
       throw new InternalServerErrorException(
         'Đã xảy ra lỗi ở phía server trong quá trình đăng ký tài khoản',
@@ -447,8 +448,6 @@ class AuthService {
         role: role.name ?? 'Admin', // -> Error here
       };
     } catch (e) {
-      console.log(`Lỗi đăng nhập quản trị: ${e.message}`);
-
       if (e instanceof HttpException) {
         throw e;
       }

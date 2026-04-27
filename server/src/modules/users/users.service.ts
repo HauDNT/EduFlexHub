@@ -294,16 +294,22 @@ export class UsersService {
     await queryRunner.startTransaction();
 
     try {
-      await validateAndGetEntitiesByIds(this.userRepository, userIds);
+      const users = await validateAndGetEntitiesByIds(this.userRepository, userIds);
+
+      const avatarUrls = users
+        .map((user) => user.avatar_url)
+        .filter(Boolean);
+
       const deleteUsersResult = await queryRunner.manager.delete(User, {
         id: In(userIds),
       });
 
-      // Delete user avatars here!!!!
-
-      // ----------------------------
-
       await queryRunner.commitTransaction();
+
+      for (const url of avatarUrls) {
+        await deleteFile(url).catch((error) => console.error(`Không thể xoá file ${url}:`, error));
+      }
+
       return deleteUsersResult;
     } catch (error) {
       await queryRunner.rollbackTransaction();

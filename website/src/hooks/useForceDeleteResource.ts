@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosInstance } from '@/utils';
 
-export const useDeleteResource = (
+export const useForceDeleteResource = (
   resource: string,
   idsColumnName: string = 'itemIds',
   onSuccessCallback?: () => void,
@@ -11,7 +11,7 @@ export const useDeleteResource = (
 
   return useMutation({
     mutationFn: async (itemIds: string[]) => {
-      await axiosInstance.delete(`/${resource}/delete`, {
+      await axiosInstance.delete(`/${resource}/force-delete`, {
         data: { [idsColumnName]: itemIds },
       });
     },
