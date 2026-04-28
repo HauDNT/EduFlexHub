@@ -23,7 +23,7 @@ export const AdminSidebarItems = [
     {
         name: "Khoá học",
         icon: <FiBook size={25}/>,
-        path: "#",
+        path: "/admin/courses",
     },
     {
         name: "Hoá đơn",
