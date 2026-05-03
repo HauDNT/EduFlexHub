@@ -4,43 +4,47 @@ import { BiReceipt } from 'react-icons/bi'
 import { RoleEnum } from "@/enums";
 
 export const AdminSidebarItems = [
-    {icon: <FiGrid size={25}/>, name: "Dashboard", path: "/admin/dashboard"},
-    {
-        name: "Người dùng",
-        icon: <FaUserCircle size={25}/>,
-        subItems: [
-            {name: "Quản trị", path: `/admin/members?type=${RoleEnum.Admin}`},
-            {name: "Nhân viên", path: `/admin/members?type=${RoleEnum.Staff}`},
-            {name: "Giảng viên", path: `/admin/members?type=${RoleEnum.Teacher}`},
-            {name: "Học viên", path: `/admin/members?type=${RoleEnum.Student}`},
-        ],
-    },
-    {
-        name: "Phân quyền",
-        icon: <FaUserShield size={25}/>,
-        path: "#"
-    },
-    {
-        name: "Khoá học",
-        icon: <FiBook size={25}/>,
-        path: "/admin/courses",
-    },
-    {
-        name: "Hoá đơn",
-        icon: <BiReceipt size={25}/>,
-        path: "#"
-    },
+  { icon: <FiGrid size={25} />, name: "Dashboard", path: "/admin/dashboard" },
+  {
+    name: "Người dùng",
+    icon: <FaUserCircle size={25} />,
+    subItems: [
+      { name: "Quản trị", path: `/admin/members?type=${RoleEnum.Admin}` },
+      { name: "Nhân viên", path: `/admin/members?type=${RoleEnum.Staff}` },
+      { name: "Giảng viên", path: `/admin/members?type=${RoleEnum.Teacher}` },
+      { name: "Học viên", path: `/admin/members?type=${RoleEnum.Student}` },
+    ],
+  },
+  {
+    name: "Phân quyền",
+    icon: <FaUserShield size={25} />,
+    path: "#"
+  },
+  {
+    name: "Quản lý khoá học",
+    icon: <FiBook size={25} />,
+    subItems: [
+      { name: "Khoá học", path: '/admin/courses' },
+      { name: "Chương học", path: '/admin/courses/#' },
+      { name: "Bài học", path: '/admin/courses/#' },
+    ],
+  },
+  {
+    name: "Hoá đơn",
+    icon: <BiReceipt size={25} />,
+    path: "#"
+  },
 ];
 
 export const UserSidebarItems = [
-    {icon: <FiPieChart size={25}/>, name: "Charts", path: "/product/charts"},
-    {icon: <FiCpu size={25}/>, name: "Plugins", path: "/product/plugins"},
-    {
-        name: "UI Elements",
-        icon: <FiCpu size={25}/>,
-        subItems: [
-            {name: "Alerts", path: "/product/alerts"},
-            {name: "Avatar", path: "/product/avatars"},
-        ],
-    },
+  { icon: <FiPieChart size={25} />, name: "Charts", path: "/product/charts" },
+  { icon: <FiCpu size={25} />, name: "Plugins", path: "/product/plugins" },
+  {
+    name: "UI Elements",
+    icon: <FiCpu size={25} />,
+    subItems: [
+      { name: "Alerts", path: "/product/alerts" },
+      { name: "Avatar", path: "/product/avatars" },
+    ],
+  },
 ];
