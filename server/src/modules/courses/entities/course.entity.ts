@@ -15,7 +15,7 @@ export class Course {
     name: string;
 
     @Column({ type: 'time' })
-    duration: Date;
+    duration: string;
 
     @Column()
     description: string;

@@ -11,7 +11,6 @@ import { join } from 'path';
 import * as requestIp from 'request-ip';
 import * as express from 'express';
 import cookieParser from 'cookie-parser';
-// import {SeedService} from "@/database/seeds/seed.service";
 import { AllExceptionsFilter } from '@/config/AllExceptionsFilter';
 
 async function bootstrap() {
@@ -68,10 +67,6 @@ async function bootstrap() {
 
   // Swagger
   swaggerConfig(app);
-
-  // Seeding data
-  // const seedService = app.get(SeedService);
-  // await seedService.seed();
 
   await app.listen(port ?? 8081);
 }

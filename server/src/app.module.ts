@@ -26,7 +26,6 @@ import { LoggerMiddleware } from './middleware/LoggerMiddleware';
 import { AuthModule } from './modules/auth/auth.module';
 import {APP_FILTER} from "@nestjs/core";
 import { MailModule } from './modules/mail/mail.module';
-import {SeedModule} from "@/database/seeds/seed.module";
 import { AllExceptionsFilter } from '@/config/AllExceptionsFilter';
 
 @Module({
@@ -58,7 +57,6 @@ import { AllExceptionsFilter } from '@/config/AllExceptionsFilter';
         VouchersModule,
         AuthModule,
         MailModule,
-        SeedModule,
     ],
     controllers: [AppController],
     providers: [
