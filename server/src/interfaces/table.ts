@@ -3,7 +3,7 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 export interface TableColumn {
   key: string;
   displayName: string;
-  type: 'string' | 'number' | 'boolean' | 'date' | 'gender';
+  type: 'string' | 'number' | 'boolean' | 'date' | 'gender' | 'money';
   valueMapping?: Record<string, string>;
 }
 

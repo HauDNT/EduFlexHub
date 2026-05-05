@@ -20,7 +20,7 @@ export const seedCourses = async (
 
   const courses: Course[] = [];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 100; i++) {
     const teacher = teachers[i % teachers.length];
     courses.push(courseFactory(teacher));
   }

@@ -36,7 +36,7 @@ export class CoursesService {
         { key: 'name', displayName: 'Tên khoá học', type: 'string' },
         { key: 'duration', displayName: 'Thời lượng (phút)', type: 'number' },
         { key: 'description', displayName: 'Mô tả', type: 'string' },
-        { key: 'price', displayName: 'Giá', type: 'string' },
+        { key: 'price', displayName: 'Giá', type: 'money' },
         { key: 'created_at', displayName: 'Ngày tạo', type: 'date' },
         { key: 'updated_at', displayName: 'Ngày cập nhật', type: 'date' },
       ],
