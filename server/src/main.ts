@@ -1,3 +1,9 @@
+import { join } from 'path';
+import passport from 'passport';
+import * as express from 'express';
+import session from 'express-session';
+import * as requestIp from 'request-ip';
+import cookieParser from 'cookie-parser';
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import {ConfigService} from '@nestjs/config';
@@ -5,12 +11,6 @@ import {swaggerConfig} from './config/SwaggerConfig';
 import {ValidationPipe} from '@nestjs/common';
 import {UsersService} from '@/modules/users/users.service';
 import {PassportOAuthConfig} from '@/authentication/google_oauth2/google-passport.config';
-import session from 'express-session';
-import passport from 'passport';
-import { join } from 'path';
-import * as requestIp from 'request-ip';
-import * as express from 'express';
-import cookieParser from 'cookie-parser';
 import { AllExceptionsFilter } from '@/config/AllExceptionsFilter';
 
 async function bootstrap() {

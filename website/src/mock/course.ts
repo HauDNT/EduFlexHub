@@ -1,15 +1,4 @@
-type Course = {
-  id: number;
-  name: string;
-  duration: number;
-  description: string;
-  price: number;
-  created_at: string;
-  updated_at: string;
-  thumbnail_url: string;
-}
-
-export const CoursesMock = Array.from({ length: 10 }, (_, i) => ({
+export const CoursesMock = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `Course ${i + 1}`,
   duration: 20 + i,

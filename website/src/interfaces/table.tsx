@@ -56,7 +56,8 @@ export interface CustomTableColumn {
     key: string;
     displayName: string;
     type: 'string' | 'number' | 'boolean' | 'date' | 'gender';
-    valueMapping?: Record<string, any>
+    valueMapping?: Record<string, any>,
+    maxLength?: number,
 }
 
 export interface CustomTableData {

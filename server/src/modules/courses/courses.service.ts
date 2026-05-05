@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Course } from '@/modules/courses/entities/course.entity';
+import { IsNull, Repository } from 'typeorm';
+import { GetDataWithQueryParamsDTO } from '@/dto';
+import { TableMetaData } from '@/interfaces/table';
+import { getDataWithQueryAndPaginate } from '@/utils/paginateAndSearch';
 
 @Injectable()
 export class CoursesService {
-  create(createCourseDto: CreateCourseDto) {
-    return 'This action adds a new course';
-  }
+  constructor(
+    @InjectRepository(Course) 
+    private courseRepository: Repository<Course>,
+  ) {}
 
-  findAll() {
-    return `This action returns all courses`;
-  }
+  async getCoursesByTypeAndQuery(data: GetDataWithQueryParamsDTO): Promise<TableMetaData<Course>> {
+    const { page, limit, queryString, searchFields } = data;
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
-  }
-
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+    return await getDataWithQueryAndPaginate<Course>({
+      repository: this.courseRepository,
+      page,
+      limit,
+      queryString,
+      searchFields: searchFields ? searchFields.split(',') : [],
+      selectFields: [
+        'id',
+        'name',
+        'duration',
+        'description',
+        'price',
+        'created_at',
+        'updated_at',
+      ],
+      columnsMeta: [
+        { key: 'id', displayName: 'ID', type: 'number' },
+        { key: 'name', displayName: 'Tên khoá học', type: 'string' },
+        { key: 'duration', displayName: 'Thời lượng (phút)', type: 'number' },
+        { key: 'description', displayName: 'Mô tả', type: 'string' },
+        { key: 'price', displayName: 'Giá', type: 'string' },
+        { key: 'created_at', displayName: 'Ngày tạo', type: 'date' },
+        { key: 'updated_at', displayName: 'Ngày cập nhật', type: 'date' },
+      ],
+      where: { deleted_at: IsNull() }
+    })
   }
 }

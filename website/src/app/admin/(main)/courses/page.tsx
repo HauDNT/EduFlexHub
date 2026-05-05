@@ -1,19 +1,44 @@
 'use client'
-
-import { useState } from "react";
-import { MetaPaginate } from "@/interfaces";
+import { useEffect, useState } from "react";
+import { CustomTableData, MetaPaginate } from "@/interfaces";
 import CustomTable from "@/components/table/CustomTable"
 import PageBreadcrumb from "@/components/common/PageBreadCrumb"
 import CustomPagination from "@/components/common/CustomPagination"
-import { usePaginate } from "@/hooks";
-import { CoursesMock } from "@/mock/course";
+import { useFetchResource, usePaginate } from "@/hooks";
 
 export default function CoursesManagement() {
   const [meta, setMeta] = useState<MetaPaginate>({ totalPages: 1, currentPage: 1, limit: 10 });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState<CustomTableData>({
+    columns: [],
+    values: [],
+  })
+  const { data: cachedData } = useFetchResource({
+    resource: 'courses',
+    page: meta.currentPage,
+    limit: meta.limit,
+    queryString: searchQuery,
+    searchFields: "name",
+  })
   const { handlePrevPage, handleNextPage, handleClickPage } = usePaginate({
     meta,
     setMetaCallback: setMeta,
   })
+
+  useEffect(() => {
+    if (cachedData) {
+      setData({
+        columns: cachedData.columns,
+        values: cachedData.values,
+      });
+
+      setMeta((prev) => ({
+        ...prev,
+        totalPages: cachedData.meta.totalPages,
+        currentPage: cachedData.meta.currentPage,
+      }));
+    }
+  }, [cachedData]);
 
   return (
     <div>
@@ -21,30 +46,17 @@ export default function CoursesManagement() {
 
       <div className="space-y-6">
         <CustomTable
-          tableTitle={''}
-          tableData={
-            {
-              columns: [
-                { key: 'id', displayName: 'ID', type: 'number' },
-                { key: 'name', displayName: 'Tên khoá học', type: 'string' },
-                { key: 'duration', displayName: 'Thời lượng', type: 'number' },
-                { key: 'description', displayName: 'Mô tả', type: 'string' },
-                { key: 'price', displayName: 'Giá', type: 'string' },
-                { key: 'created_at', displayName: 'Ngày tạo', type: 'string' },
-                { key: 'updated_at', displayName: 'Ngày cập nhật', type: 'string' },
-              ],
-              values: CoursesMock
-            }
-          }
-          createItem={false}
-          detailItem={false}
-          deleteItem={false}
-          navigateToRestore={false}
-          search={false}
+          tableTitle={'Danh sách khoá học'}
+          tableData={data}
+          createItem={true}
+          detailItem={true}
+          deleteItem={true}
+          navigateToRestore={true}
+          search={true}
           handleCreate={() => { }}
-          handleDetail={(userSelected) => { }}
+          handleDetail={(courseSelected) => { }}
           handleNavigateToRestore={() => { }}
-          handleDelete={async (userSelected) => { }}
+          handleDelete={async (courseSelected) => { }}
           handleSearch={(query) => { }}
         />
       </div>

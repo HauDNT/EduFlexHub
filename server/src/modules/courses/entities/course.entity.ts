@@ -8,56 +8,59 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGe
 
 @Entity({ name: 'courses' })
 export class Course {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column({ type: 'time' })
-    duration: string;
+  @Column({ type: 'time' })
+  duration: string;
 
-    @Column()
-    description: string;
-    
-    @Column({ type: 'double' })
-    price: number;
+  @Column()
+  description: string;
 
-    @Column({ type: 'text' })
-    thumbail_url: string;
+  @Column({ type: 'double' })
+  price: number;
 
-    @Column({ type: 'timestamp', nullable: true })
-    created_at: Date | null;
+  @Column({ type: 'text' })
+  thumbail_url: string;
 
-    @Column({ type: 'timestamp', nullable: true })
-    updated_at: Date | null;
+  @Column({ type: 'timestamp', nullable: true })
+  created_at: Date | null;
 
-    // teacher
-    @ManyToOne(() => User, account => account.courses)
-    @JoinColumn({ name: 'teacher_id' })
-    teacher: User;
+  @Column({ type: 'timestamp', nullable: true })
+  updated_at: Date | null;
 
-    // course has many modules
-    @OneToMany(() => ModulesCourse, modules_course => modules_course.course)
-    modules_course: ModulesCourse[];
+  @Column({ type: 'timestamp', nullable: true })
+  deleted_at: Date | null;
 
-    // Course's images
-    @OneToMany(() => ImagesCourse, images => images.course)
-    images: ImagesCourse[];
+  // teacher
+  @ManyToOne(() => User, account => account.courses)
+  @JoinColumn({ name: 'teacher_id' })
+  teacher: User;
 
-    // Course was saved by student
-    @ManyToMany(() => User, student => student.courses_saved)
-    student_save: User[];
+  // course has many modules
+  @OneToMany(() => ModulesCourse, modules_course => modules_course.course)
+  modules_course: ModulesCourse[];
 
-    // Complete course
-    @OneToMany(() => CompleteCourse, complete_course => complete_course.course)
-    complete_course: CompleteCourse[];
+  // Course's images
+  @OneToMany(() => ImagesCourse, images => images.course)
+  images: ImagesCourse[];
 
-    // Course in cart
-    @OneToMany(() => CartDetail, details => details.course)
-    course_in_cart: CartDetail[];
+  // Course was saved by student
+  @ManyToMany(() => User, student => student.courses_saved)
+  student_save: User[];
 
-    // Course apply vouchers
-    @OneToMany(() => Voucher, voucher => voucher.course)
-    apply_voucher: Voucher[];
+  // Complete course
+  @OneToMany(() => CompleteCourse, complete_course => complete_course.course)
+  complete_course: CompleteCourse[];
+
+  // Course in cart
+  @OneToMany(() => CartDetail, details => details.course)
+  course_in_cart: CartDetail[];
+
+  // Course apply vouchers
+  @OneToMany(() => Voucher, voucher => voucher.course)
+  apply_voucher: Voucher[];
 }
