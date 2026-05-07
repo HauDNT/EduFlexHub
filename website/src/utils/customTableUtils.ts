@@ -43,6 +43,18 @@ const formatters: Record<string, Formatter> = {
       ? str.slice(0, maxLength) + "..."
       : str;
   },
+
+  money: (value) => {
+    if (!value) return "-";
+
+    const price = Number(value);
+    const formatterVND = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    });
+
+    return formatterVND.format(price)
+  }
 };
 
 export const renderCellValues = (
